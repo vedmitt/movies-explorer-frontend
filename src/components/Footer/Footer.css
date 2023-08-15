@@ -3,7 +3,7 @@
     padding: 79px 70px 20px;
     display: flex;
     flex-direction: column;
-    font-family: ''Inter'', sans-serif;
+    font-family: Inter, sans-serif;
     font-style: normal;
     font-weight: 400;
     font-size: 13px;
@@ -54,7 +54,7 @@
 
 .footer__link:hover {
     opacity: .7;
-    cursor: po'Inter';
+    cursor: pointer;
 }
 
 
