@@ -58,9 +58,10 @@
 }
 
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 800px) {
     .footer {
         padding: 79px 30px 20px;
+        background-color: #fff;
     }
 }
 
