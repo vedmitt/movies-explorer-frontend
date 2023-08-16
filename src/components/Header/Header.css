@@ -1,4 +1,6 @@
 .header {
+    width: 100%;
+    background-color: #fff;
     box-sizing: border-box;
     display: flex;
     flex-flow: row nowrap;
@@ -7,7 +9,10 @@
     padding: 18px 70px;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+}
+
+.header_color_blue {
+    background-color: #465DFF;
 }
 
 .header__logo {
@@ -15,6 +20,11 @@
     height: 38px;
     background: url(../../images/header-logo.svg) no-repeat left top;
     background-size: contain;
+    align-self: center;
+}
+
+.header__logo_position_center {
+    width: auto;
 }
 
 @media screen and (max-width: 800px) {

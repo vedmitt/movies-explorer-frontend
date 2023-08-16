@@ -4,16 +4,23 @@ import AboutProject from "../AboutProject/AboutProject.js";
 import Techs from "../Techs/Techs.js";
 import AboutMe from "../AboutMe/AboutMe.js";
 import Portfolio from "../Portfolio/Portfolio.js";
+import Header from "../Header/Header.js";
+import Footer from "../Footer/Footer.js";
+import NavTab from "../NavTab/NavTab.js";
 
 function Main() {
     return (
-        <main>
-            <Promo />
-            <AboutProject />
-            <Techs />
-            <AboutMe />
-            <Portfolio />
-        </main>
+        <>
+        <Header isAboutProject={true}><NavTab /></Header>
+            <main>
+                <Promo />
+                <AboutProject />
+                <Techs />
+                <AboutMe />
+                <Portfolio />
+            </main>
+        <Footer />
+        </>
     );
 }
 

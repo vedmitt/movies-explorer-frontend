@@ -2,7 +2,7 @@ import React from "react";
 import { useFormAndValidation } from "../../hooks/useFormAndValidation";
 import "./AuthForm.css";
 
-function AuthForm({ onSubmit, name, buttonText }) {
+function AuthForm({ onSubmit, name, buttonText, isRegister }) {
     const initialState = { email: '', password: '' };
     const { values, handleChange, errors, isValid, setValues, resetForm } = useFormAndValidation(initialState);
 
@@ -13,17 +13,29 @@ function AuthForm({ onSubmit, name, buttonText }) {
     function handleSubmit(e) {
         e.preventDefault();
         if (isValid) {
-            onSubmit(values.password, values.email);
+            onSubmit(values.name, values.password, values.email);
         }
     }
 
     return (
         <form onSubmit={handleSubmit} name={`form-${name}`} className="form" noValidate>
-            <input id="email" value={values.email} onChange={handleChange} name="email" type="email" className="form__input form__input_theme_dark" placeholder="Email" minLength="2" maxLength="40" required />
+
+            {isRegister && <label className="form__label">Имя
+            <input className={`form__input ${errors.name && "form__input-error-text"}`} id="name" value={values.name} onChange={handleChange} name="name" type="text" placeholder="Имя" minLength="2" maxLength="40" required />
+            <span className="form__input-error">{errors.name}</span>
+            </label>}
+
+            <label className="form__label">E-mail
+            <input className={`form__input ${errors.email && "form__input-error-text"}`} id="email" value={values.email} onChange={handleChange} name="email" type="email" placeholder="Email" minLength="2" maxLength="40" required />
             <span className="form__input-error">{errors.email}</span>
-            <input id="password" value={values.password} onChange={handleChange} name="password" type="password" className="form__input form__input_theme_dark" placeholder="Пароль" minLength="6" maxLength="200" required />
+            </label>
+
+            <label className="form__label">Пароль
+            <input className={`form__input ${errors.password && "form__input-error-text"}`} id="password" value={values.password} onChange={handleChange} name="password" type="password" placeholder="Пароль" minLength="6" maxLength="200" required />
             <span className="form__input-error">{errors.password}</span>
-            <button className="form__save-btn form__save-btn_theme_dark" type="submit">{buttonText}</button>
+            </label>
+
+            <button className="form__save-btn" type="submit">{buttonText}</button>
         </form>
     );
 }

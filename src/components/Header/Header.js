@@ -1,12 +1,12 @@
 import React from "react";
-import NavTab from "../NavTab/NavTab";
 import "./Header.css"
+import { Link } from "react-router-dom";
 
-function Header() {
+function Header({isAboutProject, children, isCenter}) {
     return (
-        <header className="header">
-            <div className="header__logo"></div>
-            <NavTab />
+        <header className={`header ${isAboutProject && "header_color_blue"} ${isCenter && "header__logo_position_center"}`}>
+            <Link to='/'><div className="header__logo"></div></Link>
+            {children}
         </header>
     );
 }
