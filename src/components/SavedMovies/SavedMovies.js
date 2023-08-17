@@ -14,7 +14,7 @@ function SavedMovies({isMenuOpen, onClosePopup, onOpenPopup}) {
             <main>
                 <SearchForm />
                 <FilterCheckbox />
-                <MoviesCardList />
+                <MoviesCardList isSavedMovies={true} />
             </main>
             <Footer />
             <Navigation isOpen={isMenuOpen} onClose={onClosePopup} />

@@ -3,12 +3,13 @@ import "./Profile.css";
 import Header from "../Header/Header";
 import NavMovieTab from "../NavMovieTab/NavMovieTab";
 import Navigation from "../Navigation/Navigation";
+import { Link } from "react-router-dom";
 
 function Profile({ name, isMenuOpen, onClosePopup, onOpenPopup }) {
     return (
         <>
             <Header><NavMovieTab onMenuClick={onOpenPopup} /></Header>
-            <section className="profile">
+            <main className="profile">
                 <h2 className="profile__title">Привет, {name}!</h2>
                 <table className="profile__table">
                     <tr className="profile__line">
@@ -20,11 +21,13 @@ function Profile({ name, isMenuOpen, onClosePopup, onOpenPopup }) {
                         <td className="profile__cell">example@mail.ru</td>
                     </tr>
                 </table>
-                <div className="profile__links">
-                    <a href="#d" className="profile__link">Редактировать</a>
-                    <a href="#d" className="profile__link profile__link_color_red">Выйти из аккаунта</a>
-                </div>
-            </section>
+                <nav>
+                    <ul className="profile__links">
+                        <li><a href="#d" className="profile__link">Редактировать</a></li>
+                        <li><Link to="/" className="profile__link profile__link_color_red">Выйти из аккаунта</Link></li>
+                    </ul>
+                </nav>
+            </main>
             <Navigation isOpen={isMenuOpen} onClose={onClosePopup} />
         </>
     );

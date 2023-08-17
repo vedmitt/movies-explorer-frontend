@@ -3,16 +3,17 @@
     color: #FFF;
     font-family: Inter, sans-serif;
     font-style: normal;
-    margin: 0;
-    padding: 75px 70px;
     box-sizing: border-box;
     display: grid;
     grid-template-columns: 60% 40%;
-    grid-template-rows: repeat(2, auto);
+    grid-template-rows: 210px 94px 120px;
     grid-template-areas:
-        "header logo"
-        "paragraph logo"
-        "link link";
+    "header logo"
+    "paragraph logo"
+    "link link";
+    gap: 0;
+    margin: 0;
+    padding: 74px 70px;
 }
 
 .promo__logo {
@@ -41,13 +42,13 @@
     font-weight: 400;
     font-size: 13px;
     line-height: normal;
-    margin: 0;
+    margin: 0 0 0;
     padding: 0;
 }
 
 .promo__link {
     grid-area: link;
-    width: 129px;
+    width: 89px;
     color: #FFF;
     text-decoration: none;
     text-align: center;
@@ -83,7 +84,7 @@
     }
 
     .promo__title {
-        margin: 40px auto 0;
+        margin: 45px auto 0;
         padding: 0;
         text-align: center;
         font-size: 40px;
@@ -92,6 +93,7 @@
     }
 
     .promo__paragraph {
+        width: 38%;
         margin: 22px auto 0;
         text-align: center;
     }
@@ -103,7 +105,8 @@
 
 @media screen and (max-width: 400px) {
     .promo {
-        padding: 70px 10px 30px;
+        padding: 70px 10px 29px;
+        margin: 0;
     }
 
     .promo__logo {
@@ -119,10 +122,10 @@
         letter-spacing: -1.2px;
     }
     .promo__paragraph {
-        max-width: 80%;
+        min-width: 85%;
         margin: 24px auto 0;
     }
     .promo__link {
-        margin: 80px auto o;
+        margin: 78px auto 0;
     }
 }

@@ -9,6 +9,7 @@ import Register from "../Register/Register.js";
 import Login from "../Login/Login.js";
 import PageNotFound from "../PageNotFound/PageNotFound.js";
 import Profile from "../Profile/Profile.js";
+import Navigation from "../Navigation/Navigation.js";
 
 function App() {
     const [isMenuOpen, setMenuOpen] = React.useState(false);
@@ -44,6 +45,8 @@ function App() {
                 <Route path='/signup' element={<Register name='register' buttonText='Зарегистрироваться' />} />
                 <Route path='/signin' element={<Login  name='login' buttonText='Войти' />} />
                 <Route path='/profile' element={<Profile name='Юзернейм' isMenuOpen={isMenuOpen} onClosePopup={closePopup} onOpenPopup={handleMenuClick} />} />
+                <Route path='/navigation' element={<Navigation />} />
+                <Route path='/404' element={<PageNotFound />} />
             </Routes>
         </BrowserRouter>
     );
