@@ -2,8 +2,8 @@
     max-width: 396px;
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */
-    margin: 70px auto;
+    justify-content: flex-start;
+    margin: 40px auto 0;
     padding: 0;
 }
 
@@ -14,7 +14,8 @@
     font-style: normal;
     font-weight: 500;
     line-height: normal;
-    margin: 40px 0;
+    margin: 0 0 30px;
+    padding: 0;
 }
 
 .auth__link {
@@ -27,7 +28,8 @@
     line-height: normal;
     text-align: center;
     text-decoration: none;
-    margin: 16px 0 0;
+    margin: 16px auto 0;
+    padding: 0;
 }
 
 .auth__link-orange {
@@ -41,16 +43,20 @@
 
 @media screen and (max-width: 400px) {
     .auth {
-        max-width: 260px;
-        margin: 56px auto 0;
-        justify-content: center;
-        align-items: center;
+        padding: 10px 30px 0;
     }
+
     .auth__title {
-        margin: 50px 0;
+        margin: 0 auto 70px;
     }
+
     .auth__link {
+        color: #A0A0A0;
+        text-align: center;
+        font-family: Inter, sans-serif;
         font-size: 12px;
-        margin: 14px 0 0;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
     }
 }

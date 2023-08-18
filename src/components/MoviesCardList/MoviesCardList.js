@@ -1,13 +1,12 @@
 import React from "react";
-// import Preloader from "../Preloader/Preloader";
 import "./MoviesCardList.css";
 import MoviesCard from "../MoviesCard/MoviesCard";
 import { cards } from '../../utils/constants.js';
 
 function MoviesCardList({ isSavedMovies }) {
     return (
-        <div className="movies-card-list">
-            <div className="movies-card-list__photo-grid">
+        <div className={`movies-card-list ${cards.length <= 3 && 'movies-card-list_margin_large'}`}>
+            <div className={"movies-card-list__photo-grid"}>
                 {cards.map((card, index) => (
                     <MoviesCard card={card} cardId={index} isSavedMovies={isSavedMovies} />
                 ))}

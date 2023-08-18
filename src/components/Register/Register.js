@@ -7,7 +7,7 @@ import Header from "../Header/Header";
 function Register({ onRegister, name, buttonText }) {
     return (
         <>
-            <Header isCenter={true} />
+            <Header isAuth={true} />
             <main className='auth'>
                 <h2 className="auth__title">Добро пожаловать!</h2>
                 <AuthForm isRegister={true} onSubmit={onRegister} name={name} buttonText={buttonText} />

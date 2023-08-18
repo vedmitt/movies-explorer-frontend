@@ -22,6 +22,7 @@
     border-radius: 8px;
     background: #F9F9F9;
     border: none;
+    outline: none;
     color: #000;
     font-family: Inter, sans-serif;
     font-size: 13px;
@@ -59,8 +60,12 @@
     border-radius: 3px;
     background: #FF6838;
     border: none;
-    padding: 13px;
-    margin: 69px 0 0;
+    padding: 14px;
+    margin: 70px 0 0;
+}
+
+.form__save-btn_margin_large {
+    margin: 170px 0 0;
 }
 
 .form__save-btn:hover {
@@ -70,9 +75,20 @@
 
 @media screen and (max-width: 400px) {
     .form__input {
-        min-width: 260px;
+        padding: 15px;
     }
+
     .form__save-btn {
+        color: #FFF;
+        text-align: center;
+        font-family: Inter, sans-serif;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
         margin: 157px 0 0;
+    }
+    .form__save-btn_margin_large {
+        margin: 258px 0 0;
     }
 }

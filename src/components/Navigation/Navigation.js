@@ -6,13 +6,13 @@ function Navigation({ isOpen, onClose }) {
     return (
         <div className={`navigation ${isOpen && 'navigation_opened'}`}>
             <div className="navigation__container">
-                <button className="navigation__close-btn link" onClick={onClose} type="button"></button>
+                <button className="navigation__close-btn" onClick={onClose} type="button"></button>
                 <nav>
                     <ul className="navigation__links">
-                        <li><Link to="/" className="navigation__link link">Главная</Link></li>
-                        <li><Link to="/movies" className="navigation__link navigation__link_active link">Фильмы</Link></li>
-                        <li><Link to="/saved-movies" className="navigation__link link">Сохранённые фильмы</Link></li>
-                        <li><Link to='/profile' className="navigation__account-link link">Аккаунт</Link></li>
+                        <li className="navigation__link-item"><Link to="/" className="navigation__link">Главная</Link></li>
+                        <li className="navigation__link-item"><Link to="/movies" className="navigation__link navigation__link_active">Фильмы</Link></li>
+                        <li className="navigation__link-item"><Link to="/saved-movies" className="navigation__link">Сохранённые фильмы</Link></li>
+                        <li className="navigation__link-item"><Link to='/profile' className="profile-link profile-link_margin_large">Аккаунт</Link></li>
                     </ul>
                 </nav>
             </div>

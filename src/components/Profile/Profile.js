@@ -18,13 +18,13 @@ function Profile({ name, isMenuOpen, onClosePopup, onOpenPopup }) {
                     </tr>
                     <tr className="profile__line">
                         <td className="profile__cell">E-mail</td>
-                        <td className="profile__cell">example@mail.ru</td>
+                        <td className="profile__cell">pochta@yandex.ru</td>
                     </tr>
                 </table>
                 <nav>
                     <ul className="profile__links">
-                        <li><a href="#d" className="profile__link">Редактировать</a></li>
-                        <li><Link to="/" className="profile__link profile__link_color_red">Выйти из аккаунта</Link></li>
+                        <li className="profile__link-item"><a href="#d" className="profile__link">Редактировать</a></li>
+                        <li className="profile__link-item"><Link to="/" className="profile__link profile__link_color_red">Выйти из аккаунта</Link></li>
                     </ul>
                 </nav>
             </main>

@@ -23,18 +23,35 @@
     align-self: center;
 }
 
-.header_position_center {
-    width: auto;
+.header_size_small {
+    width: 396px;
+    margin: 70px auto 0;
+    padding: 0;
 }
 
 @media screen and (max-width: 800px) {
     .header {
         padding: 18px 30px;
     }
+
+    .header_size_small {
+        margin: 232px auto 0;
+        padding: 0;
+    }
 }
 
 @media screen and (max-width: 400px) {
     .header {
         padding: 18px 14px;
+    }
+
+    .header_size_small {
+        width: calc(100% - 60px);
+        margin: 56px auto 0;
+        padding: 0;
+    }
+
+    .header_position_center {
+        justify-content: center;
     }
 }

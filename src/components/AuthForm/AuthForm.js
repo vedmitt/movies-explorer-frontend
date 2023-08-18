@@ -35,7 +35,7 @@ function AuthForm({ onSubmit, name, buttonText, isRegister }) {
             <span className="form__input-error">{errors.password}</span>
             </label>
 
-            <button className="form__save-btn" type="submit">{buttonText}</button>
+            <button className={`form__save-btn ${!isRegister && "form__save-btn_margin_large"}`} type="submit">{buttonText}</button>
         </form>
     );
 }

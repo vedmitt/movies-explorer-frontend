@@ -18,19 +18,19 @@
 
 .navigation__container {
     position: relative;
-    width: 70%;
+    width: 68%;
+    left: 32%;
     height: 100%;
-    left: 30%;
     position: fixed;
     background-color: #fff;
 }
 
 .navigation__close-btn {
+    width: 32px;
+    height: 32px;
+    top: 22px;
+    right: 22px;
     position: absolute;
-    top: 23px;
-    right: 23px;
-    width: 22px;
-    height: 22px;
     background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="7.16016" y="9.28249" width="3" height="22" transform="rotate(-45 7.16016 9.28249)" fill="black"/><rect x="22.7168" y="7.16117" width="3" height="22" transform="rotate(45 22.7168 7.16117)" fill="black"/></svg>');
     background-repeat: no-repeat;
     background-size: contain;
@@ -38,23 +38,29 @@
     border: none;
 }
 
+.navigation__close-btn {
+    opacity: .7;
+    cursor: pointer;
+}
+
 .navigation__links {
-    position: absolute;
-    top: 30%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-content: center;
+    justify-content: flex-start;
     text-align: center;
-    margin: 0;
     padding: 0;
+    margin: 160px auto 0;
+}
+
+.navigation__link-item {
+    list-style: none;
+    width: min-content;
+    border: none;
+    padding: 0;
+    margin: 0 auto 27px;
 }
 
 .navigation__link {
-    width: min-content;
     white-space: nowrap;
     text-decoration: none;
     color: #000;
@@ -64,37 +70,23 @@
     font-style: normal;
     font-weight: 500;
     line-height: normal;
-    border: none;
-    margin: 0 0 28px 0;
+    margin: 0;
     padding: 0 0 4px 0;
-    align-self: center;
 }
 
 .navigation__link_active {
     border-bottom: 2px solid #000;
 }
 
-.link:hover {
+.navigation__link:hover {
     opacity: .7;
     cursor: pointer;
 }
 
-.navigation__account-link {
-    position: absolute;
-    top: 400%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-    margin: 0;
-    padding: 0;
-    text-decoration: none;
+.profile-link_margin_large {
+    display: block;
     color: #000;
-    font-family: Inter, sans-serif;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 16px;
-    align-self: center;
+    margin: 600px auto 0;
 }
 
 @media screen and (max-width: 400px) {
@@ -102,5 +94,21 @@
         width: 100%;
         height: 100%;
         left: 0%;
+    }
+    .navigation__close-btn {
+        top: 13px;
+        right: 13px;
+    }
+    .navigation__links {
+        margin: 145px auto 0;
+    }
+    .navigation__link-item {
+        margin: 0 auto 24px;
+    }
+    .navigation__link {
+        padding: 0 0 6px 0;
+    }
+    .profile-link_margin_large {
+        margin: 425px auto 0;
     }
 }
