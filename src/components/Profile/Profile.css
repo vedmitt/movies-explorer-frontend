@@ -1,0 +1,129 @@
+.profile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0;
+    margin: 0 auto;
+}
+
+.profile__title {
+    color: #000;
+    text-align: center;
+    font-family: Inter, sans-serif;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    padding: 0;
+    margin: 74px auto 0;
+}
+
+.profile__table {
+    width: 410px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 108px auto;
+    padding: 0;
+}
+
+.profile__line {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.profile__line:nth-of-type(1) {
+    border-bottom: 1px solid #E8E8E8;
+    ;
+}
+
+.profile__cell {
+    padding: 16px 0;
+    color: #000;
+    text-align: right;
+    font-family: Inter, sans-serif;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.profile__links {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 97px auto 0;
+    padding: 0;
+}
+
+.profile__link-item {
+    list-style: none;
+    margin: 0 auto 12px;
+}
+
+.profile__link {
+    text-decoration: none;
+    color: #000;
+    text-align: center;
+    font-family: Inter, sans-serif;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin: 0;
+    padding: 0;
+}
+
+.profile__link_color_red {
+    color: #EE3465;
+}
+
+.profile__link:hover {
+    opacity: .7;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 800px) {
+    .profile__title {
+        margin: 230px auto 0;
+        padding: 0;
+    }
+
+    .profile__table {
+        margin: 80px auto 0;
+        padding: 0;
+    }
+
+    .profile__links {
+        margin: 195px auto 0;
+        padding: 0;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .profile__title {
+        margin: 65px auto 0;
+        padding: 0;
+    }
+
+    .profile__table {
+        width: calc(100% - 60px);
+        margin: 65px auto 0;
+        padding: 0;
+    }
+
+    .profile__links {
+        margin: 362px auto 0;
+        padding: 0;
+    }
+
+    .profile__link {
+        text-align: center;
+        font-family: Inter, sans-serif;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+    }
+}

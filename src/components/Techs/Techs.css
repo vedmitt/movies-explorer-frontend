@@ -1,0 +1,141 @@
+.techs {
+    color: #000;
+    background-color: #F5F5F5;
+    font-family: Inter, sans-serif;
+    padding: 100px 70px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.techs__subtitle {
+    text-align: center;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 50px;
+    line-height: 58px;
+    letter-spacing: -2px;
+    margin: 90px auto 0;
+}
+
+.techs__description {
+    max-width: 460px;
+    text-align: center;
+    align-items: center;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: -0.56px;
+    margin: 26px auto 0;
+    padding: 0;
+}
+
+.techs__list {
+    display: grid;
+    grid-template-rows: repeat(1, auto);
+    grid-template-columns: repeat(7, auto);
+    grid-auto-flow: column;
+    gap: 10px;
+    padding: 0;
+    margin: 100px auto 0;
+}
+
+.techs__item {
+    list-style: none;
+    width: 90px;
+    background-color: #E8E8E8;
+    color: #000;
+    text-align: center;
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.56px;
+    border-radius: 10px;
+    padding: 21px 0 22px;
+    margin: 0;
+}
+
+@media screen and (max-width: 800px) {
+    .techs {
+        padding: 90px 50px;
+    }
+
+    .techs__subtitle {
+        margin: 80px auto 0;
+    }
+
+    .techs__description {
+        max-width: 460px;
+        font-size: 12px;
+        line-height: 18px;
+        letter-spacing: -0.48px;
+        margin: 22px auto 0;
+        padding: 0;
+    }
+
+    .techs__list {
+        margin: 83px auto 0;
+    }
+
+    .techs__item {
+        width: 84px;
+        color: #000;
+        text-align: center;
+        font-family: Inter, sans-serif;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        letter-spacing: -0.48px;
+        padding: 21px 0;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .techs {
+        padding: 70px 18px;
+    }
+
+    .techs__subtitle {
+        margin: 60px auto 0;
+        font-size: 30px;
+        font-weight: 400;
+        line-height: normal;
+        letter-spacing: -1.2px;
+    }
+
+    .techs__description {
+        min-width: 80%;
+        font-size: 11px;
+        font-weight: 400;
+        line-height: 16px;
+        letter-spacing: -0.44px;
+        margin: 24px auto 0;
+        padding: 0;
+    }
+
+    .techs__list {
+        grid-template-columns: repeat(2, auto);
+        grid-template-rows: repeat(4, auto);
+        grid-auto-flow: row;
+        margin: 50px auto 0;
+    }
+
+    .techs__item {
+        width: 84px;
+        color: #000;
+        text-align: center;
+        font-family: Inter, sans-serif;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        letter-spacing: -0.48px;
+        padding: 21px 0;
+        margin: 0;
+    }
+}

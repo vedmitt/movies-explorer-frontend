@@ -1,0 +1,131 @@
+.promo {
+    background-color: #465DFF;
+    color: #FFF;
+    font-family: Inter, sans-serif;
+    font-style: normal;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 60% 40%;
+    grid-template-rows: 210px 94px 120px;
+    grid-template-areas:
+    "header logo"
+    "paragraph logo"
+    "link link";
+    gap: 0;
+    margin: 0;
+    padding: 74px 70px;
+}
+
+.promo__logo {
+    grid-area: logo;
+    width: 310px;
+    height: 304px;
+    background: url(../../images/promo-logo.svg) no-repeat right top;
+    background-size: contain;
+    justify-self: right;
+}
+
+.promo__title {
+    grid-area: header;
+    height: min-content;
+    font-weight: 400;
+    font-size: 50px;
+    line-height: 58px;
+    margin: 0;
+    padding: 0;
+}
+
+.promo__paragraph {
+    max-width: 50%;
+    grid-area: paragraph;
+    opacity: 0.5;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: normal;
+    margin: 0 0 0;
+    padding: 0;
+}
+
+.promo__link {
+    grid-area: link;
+    width: 89px;
+    color: #FFF;
+    text-decoration: none;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, .6);
+    margin: 84px 0 0;
+    padding: 10px 20px;
+}
+
+.promo__link:hover {
+    opacity: .7;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 800px) {
+    .promo {
+        padding: 140px 44px 76px;
+        grid-template-columns: 100%;
+        grid-template-rows: repeat(4, auto);
+        grid-template-areas:
+            "logo"
+            "header"
+            "paragraph"
+            "link";
+    }
+
+    .promo__logo {
+        margin: 0 auto;
+        padding: 0;
+    }
+
+    .promo__title {
+        margin: 45px auto 0;
+        padding: 0;
+        text-align: center;
+        font-size: 40px;
+        font-weight: 400;
+        line-height: 50px;
+    }
+
+    .promo__paragraph {
+        width: 38%;
+        margin: 22px auto 0;
+        text-align: center;
+    }
+
+    .promo__link {
+        margin: 92px auto 0;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .promo {
+        padding: 70px 10px 29px;
+        margin: 0;
+    }
+
+    .promo__logo {
+        width: 210px;
+        height: 206px;
+    }
+
+    .promo__title {
+        margin: 44px auto 0;
+        font-size: 30px;
+        font-weight: 400;
+        line-height: 38px;
+        letter-spacing: -1.2px;
+    }
+    .promo__paragraph {
+        min-width: 85%;
+        margin: 24px auto 0;
+    }
+    .promo__link {
+        margin: 78px auto 0;
+    }
+}
