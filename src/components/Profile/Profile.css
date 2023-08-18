@@ -101,7 +101,7 @@
     }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 500px) {
     .profile__title {
         margin: 65px auto 0;
         padding: 0;

@@ -7,7 +7,7 @@ import Footer from "../Footer/Footer";
 import NavMovieTab from "../NavMovieTab/NavMovieTab";
 import Navigation from "../Navigation/Navigation";
 
-function Movies({isMenuOpen, onClosePopup, onOpenPopup}) {
+function Movies({ isMenuOpen, onClosePopup, onOpenPopup }) {
     return (
         <>
             <Header><NavMovieTab onMenuClick={onOpenPopup} /></Header>

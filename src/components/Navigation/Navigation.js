@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 function Navigation({ isOpen, onClose }) {
     return (
-        <div className={`navigation ${isOpen && 'navigation_opened'}`}>
+        <section className={`navigation ${isOpen && 'navigation_opened'}`}>
             <div className="navigation__container">
                 <button className="navigation__close-btn" onClick={onClose} type="button"></button>
                 <nav>
@@ -16,7 +16,7 @@ function Navigation({ isOpen, onClose }) {
                     </ul>
                 </nav>
             </div>
-        </div>
+        </section>
     );
 }
 
