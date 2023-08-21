@@ -1,5 +1,7 @@
 import poster from '../images/card1.jpeg';
 
+export const moviesApiBaseUrl = "https://api.nomoreparties.co/beatfilm-movies";
+
 export const cards = [
     {
         name: '33 слова о дизайне',

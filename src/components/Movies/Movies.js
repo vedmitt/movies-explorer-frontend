@@ -7,14 +7,14 @@ import Footer from "../Footer/Footer";
 import NavMovieTab from "../NavMovieTab/NavMovieTab";
 import Navigation from "../Navigation/Navigation";
 
-function Movies({ isMenuOpen, onClosePopup, onOpenPopup }) {
+function Movies({ cards, onSearchMovie, isMenuOpen, onClosePopup, onOpenPopup }) {
     return (
         <>
             <Header><NavMovieTab onMenuClick={onOpenPopup} /></Header>
             <main>
-                <SearchForm />
+                <SearchForm onSubmit={onSearchMovie} />
                 <FilterCheckbox />
-                <MoviesCardList />
+                <MoviesCardList cards={cards} />
             </main>
             <Footer />
             <Navigation isOpen={isMenuOpen} onClose={onClosePopup} />
