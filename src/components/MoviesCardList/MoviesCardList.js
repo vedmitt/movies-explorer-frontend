@@ -1,18 +1,22 @@
 import React from "react";
 import "./MoviesCardList.css";
 import MoviesCard from "../MoviesCard/MoviesCard";
-// import { cards } from '../../utils/constants.js';
+import Preloader from "../Preloader/Preloader";
 
-function MoviesCardList({ cards, isSavedMovies }) {
+function MoviesCardList({ isLoading, cards, isSavedMovies, onAddMoviesClick, isLastRow }) {
     return (
-        <div className={`movies-card-list ${cards.length <= 3 && 'movies-card-list_margin_large'}`}>
-            <div className={"movies-card-list__photo-grid"}>
-                {cards.map(card => (
-                    <MoviesCard key={card.id} card={card} isSavedMovies={isSavedMovies} />
-                ))}
-            </div>
-            <button className={`movies-card-list__load-btn ${cards.length > 3 && 'movies-card-list__load-btn_active'}`}>Ещё</button>
-        </div>
+        isLoading ? <Preloader /> :
+            cards === "error" ? <p className="movies-card-list-message">Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз</p> :
+                cards === "nothing" ?
+                    <p className="movies-card-list-message">Ничего не найдено</p> :
+                    <div className={`movies-card-list ${isLastRow && 'movies-card-list_margin_large'}`}>
+                        <div className={"movies-card-list__photo-grid"}>
+                            {cards.map(card => (
+                                <MoviesCard key={card.id} card={card} isSavedMovies={isSavedMovies} />
+                            ))}
+                        </div>
+                        <button onClick={onAddMoviesClick} className={`movies-card-list__load-btn ${!isLastRow && 'movies-card-list__load-btn_active'}`} type="button">Ещё</button>
+                    </div>
     );
 }
 

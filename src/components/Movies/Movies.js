@@ -7,14 +7,26 @@ import Footer from "../Footer/Footer";
 import NavMovieTab from "../NavMovieTab/NavMovieTab";
 import Navigation from "../Navigation/Navigation";
 
-function Movies({ cards, onSearchMovie, isMenuOpen, onClosePopup, onOpenPopup }) {
+function Movies({
+    keyword,
+    cards,
+    isShortFilm,
+    isLoading,
+    isMenuOpen,
+    isLastRow,
+    onSearchMovie,
+    onShowMoreMovies,
+    onClosePopup,
+    onOpenPopup,
+    onFilterCheckboxClick
+}) {
     return (
         <>
             <Header><NavMovieTab onMenuClick={onOpenPopup} /></Header>
             <main>
-                <SearchForm onSubmit={onSearchMovie} />
-                <FilterCheckbox />
-                <MoviesCardList cards={cards} />
+                <SearchForm savedKeyword={keyword} onSubmit={onSearchMovie} />
+                <FilterCheckbox isShortFilm={isShortFilm} onClick={onFilterCheckboxClick} />
+                <MoviesCardList cards={cards} isLoading={isLoading} onAddMoviesClick={onShowMoreMovies} isLastRow={isLastRow} />
             </main>
             <Footer />
             <Navigation isOpen={isMenuOpen} onClose={onClosePopup} />
