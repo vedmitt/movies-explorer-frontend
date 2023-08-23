@@ -7,10 +7,9 @@ function SearchForm({ savedKeyword, onSubmit }) {
     const { values, handleChange, errors, isValid, setValues, setErrors, resetForm } = useFormAndValidation(initialState);
 
     React.useEffect(() => {
-        // console.log(savedKeyword);
-        // savedKeyword && setValues({ keyword: savedKeyword });
-        resetForm(initialState, initialState);
-    }, []);
+        setValues({keyword: savedKeyword});
+        // resetForm(initialState, initialState);
+    }, [savedKeyword]);
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -25,7 +24,7 @@ function SearchForm({ savedKeyword, onSubmit }) {
     return (
         <form onSubmit={handleSubmit} name="form-movie-search" className="search-form" noValidate>
             <button className="search-form__icon"></button>
-            <input id="keyword" value={values.keyword} onChange={handleChange} name="keyword" type="text" className="search-form__input" placeholder="Фильм" minLength="2" maxLength="40" required />
+            <input id="keyword" value={values.keyword} onChange={handleChange} name="keyword" type="text" className="search-form__input" placeholder="Фильм" minLength="1" maxLength="40" required />
             <span className="form__input-error">{errors.keyword}</span>
             <button className="search-form__button" type="submit"></button>
         </form>

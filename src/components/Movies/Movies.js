@@ -18,14 +18,14 @@ function Movies({
     onShowMoreMovies,
     onClosePopup,
     onOpenPopup,
-    onFilterCheckboxClick
+    onFilterCheckboxClick,
 }) {
     return (
         <>
             <Header><NavMovieTab onMenuClick={onOpenPopup} /></Header>
             <main>
                 <SearchForm savedKeyword={keyword} onSubmit={onSearchMovie} />
-                <FilterCheckbox isShortFilm={isShortFilm} onClick={onFilterCheckboxClick} />
+                <FilterCheckbox isShortFilm={isShortFilm} onFilterCheckboxClick={onFilterCheckboxClick} />
                 <MoviesCardList cards={cards} isLoading={isLoading} onAddMoviesClick={onShowMoreMovies} isLastRow={isLastRow} />
             </main>
             <Footer />

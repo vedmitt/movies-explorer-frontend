@@ -23,14 +23,13 @@ function App() {
     const [isShortFilm, setIsShortFilm] = React.useState(false);
 
     React.useEffect(() => {
-        // setIsShortFilm(localStorage.getItem('isShortFilm'));
-        // setKeyword(localStorage.getItem('keyword'));
-        // const data = JSON.parse(localStorage.getItem('cards'));
-        // // console.log(data);
-        // if (data) {
-        //     setTotalCards(data);
-        //     setCards(data.slice(0, initialCardsLength));
-        // }
+        setIsShortFilm(localStorage.getItem('isShortFilm') === "true" ? true : false);
+        setKeyword(localStorage.getItem('keyword') || '');
+        const data = JSON.parse(localStorage.getItem('cards'));
+        if (data) {
+            setTotalCards(data);
+            setCards(data.slice(0, initialCardsLength));
+        }
     }, [initialCardsLength]);
 
     React.useEffect(() => {
@@ -56,10 +55,9 @@ function App() {
             setInitialCardsLength(5);
             setRowLength(2);
         }
-    }, [windowWidth])
+    }, [initialCardsLength, rowLength, windowWidth])
 
     React.useEffect(() => {
-        // console.log(totalCards.length, cards.length);
         setIsLastRow(cards.length >= totalCards.length);
     }, [cards, totalCards])
 
@@ -87,25 +85,44 @@ function App() {
 
     const handleFilterCheckboxClick = () => {
         setIsShortFilm(!isShortFilm);
-        console.log('checkbox click');
+    }
+
+    const filterCards = (keyword, cards) => {
+        const newCards = []
+        cards.forEach(card => {
+            let newCard = null;
+            if (card.nameRU.toLowerCase().includes(keyword)) {
+                if (isShortFilm) {
+                    if (card.duration <= 40) {
+                        newCard = card;
+                    }
+                } else {
+                    newCard = card;
+                }
+            }
+            newCard && newCards.push(newCard);
+        })
+        return newCards;
     }
 
     const handleMovieSearch = (keyword) => {
         setIsLoading(true);
         moviesApi.getMovies()
             .then((cards) => {
-                setKeyword(keyword);
-                // setTotalCards(cards);
-                // setCards(cards.slice(0, initialCardsLength));
-                // console.log('found: ', cards.length);
+                cards = filterCards(keyword, cards);
+                console.log('found: ', cards.length);
 
-                // localStorage.setItem('keyword', keyword);
-                // localStorage.setItem('isShortFilm', isShortFilm);
-                // localStorage.setItem('cards', JSON.stringify(cards));
+                setKeyword(keyword);
+                setTotalCards(cards);
+                setCards(cards.slice(0, initialCardsLength));
+
+                localStorage.setItem('keyword', keyword);
+                localStorage.setItem('isShortFilm', isShortFilm);
+                localStorage.setItem('cards', JSON.stringify(cards));
             })
             .catch(err => {
                 console.error(err);
-                setCards("error");
+                setCards(null);
             })
             .finally(() => {
                 setIsLoading(false);

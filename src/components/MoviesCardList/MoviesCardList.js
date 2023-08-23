@@ -6,8 +6,8 @@ import Preloader from "../Preloader/Preloader";
 function MoviesCardList({ isLoading, cards, isSavedMovies, onAddMoviesClick, isLastRow }) {
     return (
         isLoading ? <Preloader /> :
-            cards === "error" ? <p className="movies-card-list-message">Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз</p> :
-                cards === "nothing" ?
+            cards === null ? <p className="movies-card-list-message">Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз</p> :
+                cards.length === 0 ?
                     <p className="movies-card-list-message">Ничего не найдено</p> :
                     <div className={`movies-card-list ${isLastRow && 'movies-card-list_margin_large'}`}>
                         <div className={"movies-card-list__photo-grid"}>
