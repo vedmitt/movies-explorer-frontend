@@ -9,12 +9,13 @@ import Profile from "../Profile/Profile.js";
 import PageNotFound from "../PageNotFound/PageNotFound.js";
 import Navigation from "../Navigation/Navigation.js";
 import { moviesApi } from "../../utils/MoviesApi.js";
+import { mainApi } from "../../utils/MainApi.js";
 
 function App() {
     const [isMenuOpen, setMenuOpen] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
     const [totalCards, setTotalCards] = React.useState([]);
-    const [cards, setCards] = React.useState([]);
+    const [cards, setCards] = React.useState(['']);
     const [rowLength, setRowLength] = React.useState(3);
     const [initialCardsLength, setInitialCardsLength] = React.useState(3);
     const [isLastRow, setIsLastRow] = React.useState(false);
@@ -133,6 +134,44 @@ function App() {
         setCards(totalCards.slice(0, cards.length + rowLength));
     }
 
+    const handleCardLike = (card) => {
+        // const isLiked = card.likes.some(i => i._id === currentUserState._id);
+        mainApi.changeLikeCardStatus({
+            country: card.country,
+            director: card.director,
+            duration: card.duration,
+            year: card.year,
+            description: card.description,
+            image: card.image.url,
+            trailerLink: card.trailerLink,
+            thumbnail: card.image.previewUrl,
+            // owner: '64b8f8f18564e0e7308f7346',
+            movieId: card.id,
+            nameRU: card.nameRU,
+            nameEN: card.nameEN,
+        }, false)
+            .then((newCard) => {
+                console.log('liked', newCard);
+                // setCards((state) => state.map((c) => c.id === card.id ? newCard : c));
+            })
+            .catch(err => {
+                console.error(err);
+            })
+    }
+
+    const handleRegisterUser = (name, email, password) => {
+        mainApi.register(name, email, password)
+          .then(res => {
+            console.log(res);
+            // setMessage({ type: 'success', text: 'Вы успешно зарегистрировались!' });
+          }).catch(err => {
+            console.error(err);
+            // setMessage({ type: 'error', text: 'Что-то пошло не так! Попробуйте ещё раз.' });
+          }).finally(() => {
+            // setInfoTooltipOpen(true);
+          });
+      }
+
     return (
         <BrowserRouter>
             <Routes>
@@ -147,6 +186,7 @@ function App() {
                             onClosePopup={closePopup}
                             onOpenPopup={handleMenuClick}
                             onFilterCheckboxClick={handleFilterCheckboxClick}
+                            onCardLike={handleCardLike}
                             isShortFilm={isShortFilm}
                             isMenuOpen={isMenuOpen}
                             isLoading={isLoading}
@@ -168,6 +208,7 @@ function App() {
                         <Register
                             name='register'
                             buttonText='Зарегистрироваться'
+                            onRegister={handleRegisterUser}
                         />
                     }
                 />

@@ -3,17 +3,21 @@ import { useFormAndValidation } from "../../hooks/useFormAndValidation";
 import "./AuthForm.css";
 
 function AuthForm({ onSubmit, name, buttonText, isRegister }) {
-    const initialState = { email: '', password: '' };
+    const initialState = { name: '', email: '', password: '' };
     const { values, handleChange, errors, isValid, setValues, resetForm } = useFormAndValidation(initialState);
 
     React.useEffect(() => {
         resetForm(initialState, initialState);
     }, []);
 
+    function handleNameChange(e) {
+        console.log('changing');
+    }
+
     function handleSubmit(e) {
         e.preventDefault();
         if (isValid) {
-            onSubmit(values.name, values.password, values.email);
+            onSubmit(values.name, values.email, values.password);
         }
     }
 

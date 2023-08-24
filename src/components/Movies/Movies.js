@@ -19,6 +19,7 @@ function Movies({
     onClosePopup,
     onOpenPopup,
     onFilterCheckboxClick,
+    onCardLike,
 }) {
     return (
         <>
@@ -26,7 +27,7 @@ function Movies({
             <main>
                 <SearchForm savedKeyword={keyword} onSubmit={onSearchMovie} />
                 <FilterCheckbox isShortFilm={isShortFilm} onFilterCheckboxClick={onFilterCheckboxClick} />
-                <MoviesCardList cards={cards} isLoading={isLoading} onAddMoviesClick={onShowMoreMovies} isLastRow={isLastRow} />
+                <MoviesCardList cards={cards} isLoading={isLoading} onAddMoviesClick={onShowMoreMovies} onCardLike={onCardLike} isLastRow={isLastRow} />
             </main>
             <Footer />
             <Navigation isOpen={isMenuOpen} onClose={onClosePopup} />
