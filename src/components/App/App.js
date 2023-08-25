@@ -10,8 +10,10 @@ import PageNotFound from "../PageNotFound/PageNotFound.js";
 import Navigation from "../Navigation/Navigation.js";
 import { moviesApi } from "../../utils/MoviesApi.js";
 import { mainApi } from "../../utils/MainApi.js";
+import { currentUser, CurrentUserContext } from "../../contexts/CurrentUserContext.js";
 
 function App() {
+    const [currentUserState, setCurrentUser] = React.useState(currentUser);
     const [isMenuOpen, setMenuOpen] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
     const [totalCards, setTotalCards] = React.useState([]);
@@ -22,6 +24,7 @@ function App() {
     const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
     const [keyword, setKeyword] = React.useState('');
     const [isShortFilm, setIsShortFilm] = React.useState(false);
+    const [message, setMessage] = React.useState('');
 
     React.useEffect(() => {
         setIsShortFilm(localStorage.getItem('isShortFilm') === "true" ? true : false);
@@ -159,81 +162,102 @@ function App() {
             })
     }
 
-    const handleRegisterUser = (name, email, password) => {
+    const handleRegisterUser = (email, password, name) => {
         mainApi.register(name, email, password)
-          .then(res => {
-            console.log(res);
-            // setMessage({ type: 'success', text: 'Вы успешно зарегистрировались!' });
-          }).catch(err => {
-            console.error(err);
-            // setMessage({ type: 'error', text: 'Что-то пошло не так! Попробуйте ещё раз.' });
-          }).finally(() => {
-            // setInfoTooltipOpen(true);
-          });
-      }
+            .then(res => {
+                // авторизация и перенаправление на Фильмы
+            }).catch(err => {
+                setMessage(err === 'Ошибка: 409' ?
+                    'Пользователь с таким email уже существует.' :
+                    'При регистрации пользователя произошла ошибка.');
+            });
+    }
+
+    const handleLoginUser = (email, password) => {
+        mainApi.login(email, password)
+            .then(res => {
+                // токен создан и записан в куки
+                console.log(res);
+                // localStorage.setItem('token', res.token);
+                // setCurrentUser();
+            }).catch(err => {
+                console.log(err);
+                setMessage(err);
+            });
+    }
+
+    //   const handleSignOut = () => {
+    //     localStorage.removeItem('token');
+    //     setEmail(null);
+    //   }
 
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path='/' element={<Main />} />
-                <Route path='/movies'
-                    element={
-                        <Movies
-                            keyword={keyword}
-                            cards={cards}
-                            onShowMoreMovies={handleShowMoreMovies}
-                            onSearchMovie={handleMovieSearch}
-                            onClosePopup={closePopup}
-                            onOpenPopup={handleMenuClick}
-                            onFilterCheckboxClick={handleFilterCheckboxClick}
-                            onCardLike={handleCardLike}
-                            isShortFilm={isShortFilm}
-                            isMenuOpen={isMenuOpen}
-                            isLoading={isLoading}
-                            isLastRow={isLastRow}
-                        />
-                    }
-                />
-                <Route path='/saved-movies'
-                    element={
-                        <SavedMovies
-                            isMenuOpen={isMenuOpen}
-                            onClosePopup={closePopup}
-                            onOpenPopup={handleMenuClick}
-                        />
-                    }
-                />
-                <Route path='/signup'
-                    element={
-                        <Register
-                            name='register'
-                            buttonText='Зарегистрироваться'
-                            onRegister={handleRegisterUser}
-                        />
-                    }
-                />
-                <Route path='/signin'
-                    element={
-                        <Login
-                            name='login'
-                            buttonText='Войти'
-                        />
-                    }
-                />
-                <Route path='/profile'
-                    element={
-                        <Profile
-                            name='Виталий'
-                            isMenuOpen={isMenuOpen}
-                            onClosePopup={closePopup}
-                            onOpenPopup={handleMenuClick}
-                        />
-                    }
-                />
-                {/* <Route path='/navigation' element={<Navigation isOpen={true} />} />
+        <CurrentUserContext.Provider value={currentUserState}>
+            <BrowserRouter>
+                <Routes>
+                    <Route path='/' element={<Main />} />
+                    <Route path='/movies'
+                        element={
+                            <Movies
+                                keyword={keyword}
+                                cards={cards}
+                                onShowMoreMovies={handleShowMoreMovies}
+                                onSearchMovie={handleMovieSearch}
+                                onClosePopup={closePopup}
+                                onOpenPopup={handleMenuClick}
+                                onFilterCheckboxClick={handleFilterCheckboxClick}
+                                onCardLike={handleCardLike}
+                                isShortFilm={isShortFilm}
+                                isMenuOpen={isMenuOpen}
+                                isLoading={isLoading}
+                                isLastRow={isLastRow}
+                            />
+                        }
+                    />
+                    <Route path='/saved-movies'
+                        element={
+                            <SavedMovies
+                                isMenuOpen={isMenuOpen}
+                                onClosePopup={closePopup}
+                                onOpenPopup={handleMenuClick}
+                            />
+                        }
+                    />
+                    <Route path='/signup'
+                        element={
+                            <Register
+                                name='register'
+                                buttonText='Зарегистрироваться'
+                                onRegister={handleRegisterUser}
+                                message={message}
+                            />
+                        }
+                    />
+                    <Route path='/signin'
+                        element={
+                            <Login
+                                name='login'
+                                buttonText='Войти'
+                                onLogin={handleLoginUser}
+                                message={message}
+                            />
+                        }
+                    />
+                    <Route path='/profile'
+                        element={
+                            <Profile
+                                name='Виталий'
+                                isMenuOpen={isMenuOpen}
+                                onClosePopup={closePopup}
+                                onOpenPopup={handleMenuClick}
+                            />
+                        }
+                    />
+                    {/* <Route path='/navigation' element={<Navigation isOpen={true} />} />
                 <Route path='/404' element={<PageNotFound />} /> */}
-            </Routes>
-        </BrowserRouter>
+                </Routes>
+            </BrowserRouter>
+        </CurrentUserContext.Provider>
     );
 }
 

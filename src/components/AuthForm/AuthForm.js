@@ -2,7 +2,7 @@ import React from "react";
 import { useFormAndValidation } from "../../hooks/useFormAndValidation";
 import "./AuthForm.css";
 
-function AuthForm({ onSubmit, name, buttonText, isRegister }) {
+function AuthForm({ onSubmit, name, buttonText, isRegister, message }) {
     const initialState = { name: '', email: '', password: '' };
     const { values, handleChange, errors, isValid, setValues, resetForm } = useFormAndValidation(initialState);
 
@@ -10,14 +10,10 @@ function AuthForm({ onSubmit, name, buttonText, isRegister }) {
         resetForm(initialState, initialState);
     }, []);
 
-    function handleNameChange(e) {
-        console.log('changing');
-    }
-
     function handleSubmit(e) {
         e.preventDefault();
         if (isValid) {
-            onSubmit(values.name, values.email, values.password);
+            onSubmit(values.email, values.password, values.name);
         }
     }
 
@@ -38,8 +34,8 @@ function AuthForm({ onSubmit, name, buttonText, isRegister }) {
             <input className={`form__input ${errors.password && "form__input-error-text"}`} id="password" value={values.password} onChange={handleChange} name="password" type="password" placeholder="Пароль" minLength="6" maxLength="200" required />
             <span className="form__input-error">{errors.password}</span>
             </label>
-
-            <button className={`form__save-btn ${!isRegister && "form__save-btn_margin_large"}`} type="submit">{buttonText}</button>
+            <span className="form__message">{message}</span>
+            <button className={`form__save-btn ${!isRegister && "form__save-btn_margin_large"} ${isValid && "form__save-btn_active"}`} type="submit">{buttonText}</button>
         </form>
     );
 }

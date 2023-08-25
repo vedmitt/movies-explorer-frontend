@@ -104,16 +104,16 @@ class Api {
         });
     };
 
-    //   export const login = (password, email) => {
-    //     return _request(`${BASE_URL}/signin`, {
-    //       headers: {
-    //         "Accept": "application/json",
-    //         ...headers
-    //       },
-    //       method: 'POST',
-    //       body: JSON.stringify({ password, email })
-    //     });
-    //   };
+    login(email, password) {
+        return this._request(`${this._baseUrl}/signin`, {
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            method: 'POST',
+            body: JSON.stringify({ email, password })
+        });
+    };
 
     //   export const validateToken = (jwt) => {
     //     return _request(`${BASE_URL}/users/me`, {

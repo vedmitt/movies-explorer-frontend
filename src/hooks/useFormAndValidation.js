@@ -9,7 +9,7 @@ export function useFormAndValidation(inputValues) {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    const errorMessage = (name === 'name' && !value.match(/^[A-Za-z]+$/)) ?
+    const errorMessage = (name === 'name' && value && !value.match(/^([wа-яА-Я-a-zA-Z]+\s)*[wа-яА-Я-a-zA-Z]+$/)) ?
       'Только киррилица, лат. символы, пробел или дефис' :
       e.target.validationMessage;
 
