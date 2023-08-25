@@ -12,6 +12,7 @@ import ProtectedRoute from "../ProtectedRoute.js/ProtectedRoute.js";
 import { moviesApi } from "../../utils/MoviesApi.js";
 import { mainApi } from "../../utils/MainApi.js";
 import { currentUser, CurrentUserContext } from "../../contexts/CurrentUserContext.js";
+import { moviesApiBaseUrl } from "../../utils/constants.js";
 
 function App() {
     const [currentUserState, setCurrentUser] = React.useState(currentUser);
@@ -19,6 +20,7 @@ function App() {
     const [isLoading, setIsLoading] = React.useState(false);
     const [totalCards, setTotalCards] = React.useState([]);
     const [cards, setCards] = React.useState(['']);
+    const [savedCards, setSavedCards] = React.useState([]);
     const [rowLength, setRowLength] = React.useState(3);
     const [initialCardsLength, setInitialCardsLength] = React.useState(3);
     const [isLastRow, setIsLastRow] = React.useState(false);
@@ -47,7 +49,6 @@ function App() {
                 // валидируем токен
                 handleValidateToken();
             }).catch(err => {
-                console.log(err);
                 setMessage((err === 'Ошибка: 401' && 'Вы ввели неправильный логин или пароль.') ||
                     (err === 'Ошибка: 400' && 'При авторизации произошла ошибка. Токен не передан или передан не в том формате.') ||
                     'При авторизации произошла ошибка. Переданный токен некорректен.');
@@ -58,7 +59,7 @@ function App() {
         mainApi.validateToken()
             .then((data) => {
                 if (data) {
-                    setCurrentUser({ name: data.data.name, email: data.data.email });
+                    setCurrentUser({ id: data.data._id, name: data.data.name, email: data.data.email });
                 }
             })
             .catch(err => {
@@ -69,7 +70,6 @@ function App() {
     const handleSignOut = () => {
         mainApi.logout()
             .then(res => {
-                console.log(res);
                 setCurrentUser(null);
                 // localStorage.removeItem('keyword');
                 // localStorage.removeItem('isShortFilm');
@@ -88,8 +88,12 @@ function App() {
     React.useEffect(() => {
         setIsShortFilm(localStorage.getItem('isShortFilm') === "true" ? true : false);
         setKeyword(localStorage.getItem('keyword') || '');
+
+        getSavedMovies();
+
         const data = JSON.parse(localStorage.getItem('cards'));
         if (data) {
+            // console.log(data);
             setTotalCards(data);
             setCards(data.slice(0, initialCardsLength));
         }
@@ -172,6 +176,16 @@ function App() {
         return newCards;
     }
 
+    const getSavedMovies = () => {
+        mainApi.getMovies()
+            .then((cards) => {
+                setSavedCards(cards.data);
+            })
+            .catch(err => {
+                console.error(err);
+            })
+    }
+
     const handleMovieSearch = (keyword) => {
         setIsLoading(true);
         moviesApi.getMovies()
@@ -201,34 +215,38 @@ function App() {
     }
 
     const handleCardLike = (card) => {
-        // const isLiked = card.likes.some(i => i._id === currentUserState._id);
-        mainApi.changeLikeCardStatus({
-            country: card.country,
-            director: card.director,
-            duration: card.duration,
-            year: card.year,
-            description: card.description,
-            image: card.image.url,
-            trailerLink: card.trailerLink,
-            thumbnail: card.image.previewUrl,
-            // owner: '64b8f8f18564e0e7308f7346',
-            movieId: card.id,
-            nameRU: card.nameRU,
-            nameEN: card.nameEN,
-        }, false)
-            .then((newCard) => {
-                console.log('liked', newCard);
-                // setCards((state) => state.map((c) => c.id === card.id ? newCard : c));
-            })
-            .catch(err => {
-                console.error(err);
-            })
+        const isLiked = savedCards?.some(savedCard => savedCard?.movieId === card.id && savedCard?.owner === currentUserState.id);
+        const cardId = '';
+        console.log(isLiked, cardId);
+        // mainApi.changeLikeCardStatus({
+        //     country: card.country,
+        //     director: card.director,
+        //     duration: card.duration,
+        //     year: card.year,
+        //     description: card.description,
+        //     image: moviesApiBaseUrl + card.image.url,
+        //     trailerLink: card.trailerLink,
+        //     thumbnail: moviesApiBaseUrl + card.image.previewUrl.split('\n')[0],
+        //     movieId: card.id,
+        //     nameRU: card.nameRU,
+        //     nameEN: card.nameEN,
+        // }, isLiked)
+        //     .then((newCard) => {
+        //         // console.log('liked', newCard.data);
+        //         // setSavedCards((state) => state.map((c) => c.id === newCard.data.id ? newCard.data : c));
+        //         // setSavedCards((state) => state.map((c) => console.log(c, card, newCard.data)));
+        //         setSavedCards([...savedCards, newCard.data]);
+        //         // console.log(savedCards);
+        //     })
+        //     .catch(err => {
+        //         console.log(err);
+        //     })
     }
 
     const handleUpdateUser = (userInfo) => {
         mainApi.updateUserInfo(userInfo)
             .then(newUserInfo => {
-                setCurrentUser({ name: newUserInfo.data.name, email: newUserInfo.data.email });
+                setCurrentUser({ id: newUserInfo.data._id, name: newUserInfo.data.name, email: newUserInfo.data.email });
                 setMessage('');
             })
             .catch(err => {
@@ -241,7 +259,13 @@ function App() {
         <CurrentUserContext.Provider value={currentUserState}>
             <BrowserRouter>
                 <Routes>
-                    <Route path='/' element={<Main />} />
+                    <Route path='/'
+                        element={
+                            <Main
+                                onOpenPopup={handleMenuClick}
+                            />
+                        }
+                    />
                     <Route path='/movies'
                         element={
                             <ProtectedRoute
@@ -249,6 +273,7 @@ function App() {
                                 loggedIn={currentUserState}
                                 keyword={keyword}
                                 cards={cards}
+                                savedCards={savedCards}
                                 onShowMoreMovies={handleShowMoreMovies}
                                 onSearchMovie={handleMovieSearch}
                                 onClosePopup={closePopup}

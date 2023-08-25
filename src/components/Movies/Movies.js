@@ -10,6 +10,7 @@ import Navigation from "../Navigation/Navigation";
 function Movies({
     keyword,
     cards,
+    savedCards,
     isShortFilm,
     isLoading,
     isMenuOpen,
@@ -27,7 +28,7 @@ function Movies({
             <main>
                 <SearchForm savedKeyword={keyword} onSubmit={onSearchMovie} />
                 <FilterCheckbox isShortFilm={isShortFilm} onFilterCheckboxClick={onFilterCheckboxClick} />
-                <MoviesCardList cards={cards} isLoading={isLoading} onAddMoviesClick={onShowMoreMovies} onCardLike={onCardLike} isLastRow={isLastRow} />
+                <MoviesCardList cards={cards} savedCards={savedCards} isLoading={isLoading} onAddMoviesClick={onShowMoreMovies} onCardLike={onCardLike} isLastRow={isLastRow} />
             </main>
             <Footer />
             <Navigation isOpen={isMenuOpen} onClose={onClosePopup} />

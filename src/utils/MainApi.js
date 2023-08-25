@@ -25,7 +25,7 @@ class Api {
     }
 
     getMovies() {
-        return this._request(`${this._baseUrl}`, {
+        return this._request(`${this._baseUrl}/movies`, {
             headers: this._headers
         })
     }
