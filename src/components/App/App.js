@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import Main from "../Main/Main.js";
 import Movies from "../Movies/Movies.js";
 import SavedMovies from "../SavedMovies/SavedMovies.js";
@@ -8,6 +8,7 @@ import Login from "../Login/Login.js";
 import Profile from "../Profile/Profile.js";
 import PageNotFound from "../PageNotFound/PageNotFound.js";
 import Navigation from "../Navigation/Navigation.js";
+import ProtectedRoute from "../ProtectedRoute.js/ProtectedRoute.js";
 import { moviesApi } from "../../utils/MoviesApi.js";
 import { mainApi } from "../../utils/MainApi.js";
 import { currentUser, CurrentUserContext } from "../../contexts/CurrentUserContext.js";
@@ -26,6 +27,64 @@ function App() {
     const [isShortFilm, setIsShortFilm] = React.useState(false);
     const [message, setMessage] = React.useState('');
 
+
+    const handleRegisterUser = (email, password, name) => {
+        mainApi.register(name, email, password)
+            .then(res => {
+                // авторизация и перенаправление на Фильмы
+                handleLoginUser(email, password);
+            }).catch(err => {
+                setMessage(err === 'Ошибка: 409' ?
+                    'Пользователь с таким email уже существует.' :
+                    'При регистрации пользователя произошла ошибка.');
+            });
+    }
+
+    const handleLoginUser = (email, password) => {
+        mainApi.login(email, password)
+            .then(res => {
+                // токен создан и записан в куки
+                // валидируем токен
+                handleValidateToken();
+            }).catch(err => {
+                console.log(err);
+                setMessage((err === 'Ошибка: 401' && 'Вы ввели неправильный логин или пароль.') ||
+                    (err === 'Ошибка: 400' && 'При авторизации произошла ошибка. Токен не передан или передан не в том формате.') ||
+                    'При авторизации произошла ошибка. Переданный токен некорректен.');
+            });
+    }
+
+    const handleValidateToken = () => {
+        mainApi.validateToken()
+            .then((data) => {
+                if (data) {
+                    setCurrentUser({ name: data.data.name, email: data.data.email });
+                }
+            })
+            .catch(err => {
+                console.error(err);
+            })
+    }
+
+    const handleSignOut = () => {
+        mainApi.logout()
+            .then(res => {
+                console.log(res);
+                setCurrentUser(null);
+                // localStorage.removeItem('keyword');
+                // localStorage.removeItem('isShortFilm');
+                // localStorage.removeItem('cards');
+            }).catch(err => {
+                setMessage('Не получилось выйти из профиля');
+            });
+    }
+
+    // валидация токена пользователя
+    React.useEffect(() => {
+        handleValidateToken();
+    }, []);
+
+    // отображение сохранненных в лок хранилище карточек (если есть)
     React.useEffect(() => {
         setIsShortFilm(localStorage.getItem('isShortFilm') === "true" ? true : false);
         setKeyword(localStorage.getItem('keyword') || '');
@@ -36,6 +95,7 @@ function App() {
         }
     }, [initialCardsLength]);
 
+    // навешивание ресайза на окно
     React.useEffect(() => {
         const handleWindowResize = () => {
             setWindowWidth(window.innerWidth);
@@ -48,6 +108,7 @@ function App() {
         };
     });
 
+    // корректное отображение ряда карточек
     React.useEffect(() => {
         if (windowWidth > 1087) {
             setInitialCardsLength(12);
@@ -61,10 +122,12 @@ function App() {
         }
     }, [initialCardsLength, rowLength, windowWidth])
 
+    // нужно ли скрыть кнопку Еще
     React.useEffect(() => {
         setIsLastRow(cards.length >= totalCards.length);
     }, [cards, totalCards])
 
+    // навешивание обработчиков на закрытие меню
     React.useEffect(() => {
         function closeByEscape(evt) {
             if (evt.key === 'Escape') {
@@ -162,34 +225,17 @@ function App() {
             })
     }
 
-    const handleRegisterUser = (email, password, name) => {
-        mainApi.register(name, email, password)
-            .then(res => {
-                // авторизация и перенаправление на Фильмы
-            }).catch(err => {
-                setMessage(err === 'Ошибка: 409' ?
-                    'Пользователь с таким email уже существует.' :
-                    'При регистрации пользователя произошла ошибка.');
+    const handleUpdateUser = (userInfo) => {
+        mainApi.updateUserInfo(userInfo)
+            .then(newUserInfo => {
+                setCurrentUser({ name: newUserInfo.data.name, email: newUserInfo.data.email });
+                setMessage('');
+            })
+            .catch(err => {
+                console.error(err);
+                setMessage('При обновлении профиля произошла ошибка.');
             });
     }
-
-    const handleLoginUser = (email, password) => {
-        mainApi.login(email, password)
-            .then(res => {
-                // токен создан и записан в куки
-                console.log(res);
-                // localStorage.setItem('token', res.token);
-                // setCurrentUser();
-            }).catch(err => {
-                console.log(err);
-                setMessage(err);
-            });
-    }
-
-    //   const handleSignOut = () => {
-    //     localStorage.removeItem('token');
-    //     setEmail(null);
-    //   }
 
     return (
         <CurrentUserContext.Provider value={currentUserState}>
@@ -198,7 +244,9 @@ function App() {
                     <Route path='/' element={<Main />} />
                     <Route path='/movies'
                         element={
-                            <Movies
+                            <ProtectedRoute
+                                element={Movies}
+                                loggedIn={currentUserState}
                                 keyword={keyword}
                                 cards={cards}
                                 onShowMoreMovies={handleShowMoreMovies}
@@ -216,7 +264,9 @@ function App() {
                     />
                     <Route path='/saved-movies'
                         element={
-                            <SavedMovies
+                            <ProtectedRoute
+                                element={SavedMovies}
+                                loggedIn={currentUserState}
                                 isMenuOpen={isMenuOpen}
                                 onClosePopup={closePopup}
                                 onOpenPopup={handleMenuClick}
@@ -225,32 +275,40 @@ function App() {
                     />
                     <Route path='/signup'
                         element={
-                            <Register
-                                name='register'
-                                buttonText='Зарегистрироваться'
-                                onRegister={handleRegisterUser}
-                                message={message}
-                            />
+                            currentUserState?.email ? <Navigate to="/movies" replace /> :
+                                <Register
+                                    name='register'
+                                    buttonText='Зарегистрироваться'
+                                    onRegister={handleRegisterUser}
+                                    message={message}
+                                />
                         }
                     />
                     <Route path='/signin'
                         element={
-                            <Login
-                                name='login'
-                                buttonText='Войти'
-                                onLogin={handleLoginUser}
-                                message={message}
-                            />
+                            currentUserState?.email ? <Navigate to="/movies" replace /> :
+                                <Login
+                                    name='login'
+                                    buttonText='Войти'
+                                    onLogin={handleLoginUser}
+                                    message={message}
+                                />
                         }
                     />
                     <Route path='/profile'
                         element={
-                            <Profile
-                                name='Виталий'
-                                isMenuOpen={isMenuOpen}
-                                onClosePopup={closePopup}
-                                onOpenPopup={handleMenuClick}
-                            />
+                            !currentUserState?.email ? <Navigate to="/" replace /> :
+                                <ProtectedRoute
+                                    element={Profile}
+                                    loggedIn={currentUserState}
+                                    isMenuOpen={isMenuOpen}
+                                    onClosePopup={closePopup}
+                                    onOpenPopup={handleMenuClick}
+                                    onUpdateUser={handleUpdateUser}
+                                    message={message}
+                                    currentUser={currentUserState}
+                                    onSignOut={handleSignOut}
+                                />
                         }
                     />
                     {/* <Route path='/navigation' element={<Navigation isOpen={true} />} />

@@ -8,7 +8,10 @@ class Api {
     }
 
     _request(url, options) {
-        return fetch(url, options)
+        return fetch(url, {
+            credentials:  'include',
+            ...options
+        })
             .then(res => {
                 return this._getResponseData(res);
             })
@@ -50,27 +53,13 @@ class Api {
         }
     }
 
-    // getUserInfo() {
-    //     return this._request(`${this._baseUrl}/users/me`, {
-    //         headers: this._headers
-    //     })
-    // }
-
-    // updateUserInfo(userInfo) {
-    //     return this._request(`${this._baseUrl}/users/me`, {
-    //         headers: this._headers,
-    //         method: 'PATCH',
-    //         body: JSON.stringify(userInfo)
-    //     })
-    // }
-
-    // updateAvatar(url) {
-    //     return this._request(`${this._baseUrl}/users/me/avatar`, {
-    //         headers: this._headers,
-    //         method: 'PATCH',
-    //         body: JSON.stringify(url)
-    //     })
-    // }
+    updateUserInfo(userInfo) {
+        return this._request(`${this._baseUrl}/users/me`, {
+            headers: this._headers,
+            method: 'PATCH',
+            body: JSON.stringify(userInfo)
+        })
+    }
 
     // getInitialCards() {
     //     return this._request(`${this._baseUrl}/cards`, {
@@ -106,6 +95,7 @@ class Api {
 
     login(email, password) {
         return this._request(`${this._baseUrl}/signin`, {
+            // credentials: 'include',
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
@@ -115,21 +105,28 @@ class Api {
         });
     };
 
-    //   export const validateToken = (jwt) => {
-    //     return _request(`${BASE_URL}/users/me`, {
-    //       headers: {
-    //         "Authorization": `Bearer ${jwt}`,
-    //         ...headers
-    //       },
-    //       method: 'GET'
-    //     });
-    //   };
+    logout() {
+        return this._request(`${this._baseUrl}/signout`, {
+            // credentials: 'include',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            method: 'GET'
+        });
+    }
+
+    validateToken() {
+        return this._request(`${this._baseUrl}/users/me`, {
+            // credentials: 'include',
+            method: 'GET'
+        });
+    };
 }
 
 export const mainApi = new Api({
     baseUrl: mainApiBaseUrl,
     headers: {
-        // authorization: personalToken,
         'Content-Type': 'application/json'
     }
 }); 

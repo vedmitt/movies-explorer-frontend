@@ -61,6 +61,10 @@
     margin: 70px 0 0;
 }
 
+.form__message_margin_large {
+    margin: 170px 0 0;
+}
+
 .form__save-btn {
     text-align: center;
     font-family: Inter, sans-serif;
@@ -83,10 +87,6 @@
     font-weight: 500;
     line-height: normal;
     background: #FF6838;
-}
-
-.form__save-btn_margin_large {
-    margin: 170px 0 0;
 }
 
 .form__save-btn_active:hover {
@@ -114,7 +114,7 @@
         margin: 0;
     }
 
-    .form__save-btn_margin_large {
+    .form__message_margin_large {
         margin: 258px 0 0;
     }
 }

@@ -34,8 +34,8 @@ function AuthForm({ onSubmit, name, buttonText, isRegister, message }) {
             <input className={`form__input ${errors.password && "form__input-error-text"}`} id="password" value={values.password} onChange={handleChange} name="password" type="password" placeholder="Пароль" minLength="6" maxLength="200" required />
             <span className="form__input-error">{errors.password}</span>
             </label>
-            <span className="form__message">{message}</span>
-            <button className={`form__save-btn ${!isRegister && "form__save-btn_margin_large"} ${isValid && "form__save-btn_active"}`} type="submit">{buttonText}</button>
+            <span className={`form__message ${!isRegister && "form__message_margin_large"}`}>{message}</span>
+            <button className={`form__save-btn ${isValid && "form__save-btn_active"}`} type="submit">{buttonText}</button>
         </form>
     );
 }
