@@ -26,9 +26,22 @@ function Movies({
         <>
             <Header><NavMovieTab onMenuClick={onOpenPopup} /></Header>
             <main>
-                <SearchForm savedKeyword={keyword} onSubmit={onSearchMovie} />
-                <FilterCheckbox isShortFilm={isShortFilm} onFilterCheckboxClick={onFilterCheckboxClick} />
-                <MoviesCardList cards={cards} savedCards={savedCards} isLoading={isLoading} onAddMoviesClick={onShowMoreMovies} onCardLike={onCardLike} isLastRow={isLastRow} />
+                <SearchForm
+                    savedKeyword={keyword}
+                    onSubmit={onSearchMovie}
+                />
+                <FilterCheckbox
+                    isShortFilm={isShortFilm}
+                    onFilterCheckboxClick={onFilterCheckboxClick}
+                />
+                <MoviesCardList
+                    cards={cards}
+                    savedCards={savedCards}
+                    isLoading={isLoading}
+                    onAddMoviesClick={onShowMoreMovies}
+                    onCardLike={onCardLike}
+                    isLastRow={isLastRow}
+                />
             </main>
             <Footer />
             <Navigation isOpen={isMenuOpen} onClose={onClosePopup} />

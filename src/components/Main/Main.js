@@ -8,9 +8,10 @@ import Header from "../Header/Header.js";
 import Footer from "../Footer/Footer.js";
 import NavTab from "../NavTab/NavTab.js";
 import NavMovieTab from "../NavMovieTab/NavMovieTab.js";
+import Navigation from "../Navigation/Navigation.js";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 
-function Main(onOpenPopup) {
+function Main({ isMenuOpen, onOpenPopup, onClosePopup }) {
     const currentUser = React.useContext(CurrentUserContext);
 
     return (
@@ -26,6 +27,7 @@ function Main(onOpenPopup) {
                 <Portfolio />
             </main>
             <Footer />
+            <Navigation isOpen={isMenuOpen} onClose={onClosePopup} />
         </>
     );
 }
