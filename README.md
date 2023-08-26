@@ -10,6 +10,8 @@
 
 **Дизайн сделан по теме light 5**
 
+**Ссылка на пул-рекваест [https://github.com/...](https://github.com/vedmitt/movies-explorer-frontend/pull/5)**
+
 Сайт размещен на Яндекс.Облаке.
 
 Бэкенд: [https://github.com/...](https://github.com/vedmitt/movies-explorer-api)
