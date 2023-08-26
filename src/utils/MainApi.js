@@ -61,27 +61,6 @@ class Api {
         })
     }
 
-    // getInitialCards() {
-    //     return this._request(`${this._baseUrl}/cards`, {
-    //         headers: this._headers
-    //     })
-    // }
-
-    // addCard(card) {
-    //     return this._request(`${this._baseUrl}/cards`, {
-    //         headers: this._headers,
-    //         method: 'POST',
-    //         body: JSON.stringify(card)
-    //     })
-    // }
-
-    // removeCard(cardId) {
-    //     return this._request(`${this._baseUrl}/cards/${cardId}`, {
-    //         headers: this._headers,
-    //         method: 'DELETE'
-    //     })
-    // }
-
     register(name, email, password) {
         return this._request(`${this._baseUrl}/signup`, {
             headers: {

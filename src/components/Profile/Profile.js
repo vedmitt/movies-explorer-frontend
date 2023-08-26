@@ -8,7 +8,7 @@ import { useFormAndValidation } from "../../hooks/useFormAndValidation";
 
 function Profile({ currentUser, onUpdateUser, isMenuOpen, onClosePopup, onOpenPopup, onSignOut, message }) {
     const initialState = { name: '' };
-    const { values, handleChange, errors, isValid, setValues, resetForm } = useFormAndValidation(initialState);
+    const { values, handleChange, errors, isValid, setValues, resetForm } = useFormAndValidation(initialState, currentUser.name);
     const [isEdit, setIsEdit] = React.useState(false);
 
     React.useEffect(() => {

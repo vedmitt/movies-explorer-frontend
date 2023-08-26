@@ -8,7 +8,6 @@ function SearchForm({ savedKeyword, onSubmit }) {
 
     React.useEffect(() => {
         setValues({keyword: savedKeyword});
-        // resetForm(initialState, initialState);
     }, [savedKeyword]);
 
     function handleSubmit(e) {

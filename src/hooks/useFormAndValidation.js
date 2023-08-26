@@ -1,7 +1,7 @@
 
 import { useState, useCallback } from 'react';
 
-export function useFormAndValidation(inputValues) {
+export function useFormAndValidation(inputValues, oldName = '') {
   const [values, setValues] = useState(inputValues);
   const [errors, setErrors] = useState(inputValues);
   const [isValid, setIsValid] = useState(true);
@@ -9,13 +9,22 @@ export function useFormAndValidation(inputValues) {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    const errorMessage = (name === 'name' && value && !value.match(/^([wа-яА-Я-a-zA-Z]+\s)*[wа-яА-Я-a-zA-Z]+$/)) ?
-      'Только киррилица, лат. символы, пробел или дефис' :
-      e.target.validationMessage;
+    let errorMessage = e.target.validationMessage;
+    setIsValid(e.target.closest('form').checkValidity());
+
+    if (name === 'name' && value) {
+      if (!value.match(/^([wа-яА-Я-a-zA-Z]+\s)*[wа-яА-Я-a-zA-Z]+$/)) {
+        errorMessage = 'Только киррилица, лат. символы, пробел или дефис';
+        setIsValid(false);
+      }
+      if (value === oldName) {
+        errorMessage = 'Введите новое имя';
+        setIsValid(false);
+      }
+    }
 
     setValues({ ...values, [name]: value });
     setErrors({ ...errors, [name]: errorMessage });
-    setIsValid(e.target.closest('form').checkValidity());
   };
 
   const resetForm = useCallback((newValues = {}, newErrors = {}, newIsValid = false) => {

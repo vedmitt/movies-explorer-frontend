@@ -7,7 +7,6 @@ import Register from "../Register/Register.js";
 import Login from "../Login/Login.js";
 import Profile from "../Profile/Profile.js";
 import PageNotFound from "../PageNotFound/PageNotFound.js";
-import Navigation from "../Navigation/Navigation.js";
 import ProtectedRoute from "../ProtectedRoute.js/ProtectedRoute.js";
 import { moviesApi } from "../../utils/MoviesApi.js";
 import { mainApi } from "../../utils/MainApi.js";
@@ -23,7 +22,7 @@ function App() {
     const [savedCards, setSavedCards] = React.useState([]); // все сохраненные карточки
     const [cardsSavedMovies, setCardsSavedMovies] = React.useState(['']); // сохраненные карточки (используются только в Сохр фильмах!)
     const [rowLength, setRowLength] = React.useState(3);  // длина ряда карточек
-    const [initialCardsLength, setInitialCardsLength] = React.useState(3);
+    const [initialCardsLength, setInitialCardsLength] = React.useState(12);
     const [isLastRow, setIsLastRow] = React.useState(false);
     const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
     const [keyword, setKeyword] = React.useState('');
@@ -54,14 +53,18 @@ function App() {
                 setMessage((err === 'Ошибка: 401' && 'Вы ввели неправильный логин или пароль.') ||
                     (err === 'Ошибка: 400' && 'При авторизации произошла ошибка. Токен не передан или передан не в том формате.') ||
                     'При авторизации произошла ошибка. Переданный токен некорректен.');
-            });
+            })
     }
 
     const handleValidateToken = () => {
         mainApi.validateToken()
             .then((data) => {
                 if (data) {
-                    setCurrentUser({ id: data.data._id, name: data.data.name, email: data.data.email });
+                    setCurrentUser({
+                        id: data.data._id,
+                        name: data.data.name,
+                        email: data.data.email
+                    });
                 }
             })
             .catch(err => {
@@ -73,6 +76,14 @@ function App() {
         mainApi.logout()
             .then(res => {
                 setCurrentUser(null);
+                setKeyword('');
+                setKeywordSavedMovies('');
+                setIsShortFilm(false);
+                setTotalCards([]);
+                setSavedCards([]);
+                setCards(['']);
+                setCardsSavedMovies(['']);
+                setMessage('');
                 localStorage.removeItem('keyword');
                 localStorage.removeItem('isShortFilm');
                 localStorage.removeItem('cards');
@@ -91,13 +102,27 @@ function App() {
         setIsShortFilm(localStorage.getItem('isShortFilm') === "true" ? true : false);
         setKeyword(localStorage.getItem('keyword') || '');
 
-        getSavedMovies();
+        // getSavedMovies();
 
         const data = JSON.parse(localStorage.getItem('cards'));
         if (data) {
-            // console.log(data);
             setTotalCards(data);
             setCards(data.slice(0, initialCardsLength));
+        } else {
+            // загрузка карточек с битфильмс
+            setIsLoading(true);
+            moviesApi.getMovies()
+                .then((cards) => {
+                    setTotalCards(cards);
+                    setCards(cards.slice(0, initialCardsLength));
+                })
+                .catch(err => {
+                    console.error(err);
+                    setCards(null);
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
         }
     }, [initialCardsLength]);
 
@@ -158,6 +183,23 @@ function App() {
 
     const handleFilterCheckboxClick = () => {
         setIsShortFilm(!isShortFilm);
+        if (!isShortFilm) {
+            const sortedCards = filterCardsByDuration(totalCards);
+            setTotalCards(sortedCards);
+            setCards(sortedCards.slice(0, initialCardsLength));
+            localStorage.setItem('isShortFilm', isShortFilm);
+            localStorage.setItem('cards', JSON.stringify(sortedCards));
+        }
+    }
+
+    const handleFilterCheckboxSavedMovies = () => {
+        setIsShortFilm(!isShortFilm);
+        if (!isShortFilm) {
+            const sortedCards = filterCardsByDuration(savedCards);
+            setCardsSavedMovies(sortedCards);
+        } else {
+            setCardsSavedMovies(savedCards);
+        }
     }
 
     const filterCards = (keyword, cards) => {
@@ -169,11 +211,20 @@ function App() {
                     if (card.duration <= 40) {
                         newCard = card;
                     }
-                } else {
-                    newCard = card;
                 }
+                newCard = card;
             }
             newCard && newCards.push(newCard);
+        })
+        return newCards;
+    }
+
+    const filterCardsByDuration = (cards) => {
+        const newCards = [];
+        cards.forEach(card => {
+            if (card.duration <= 40) {
+                newCards.push(card);
+            }
         })
         return newCards;
     }
@@ -181,25 +232,32 @@ function App() {
     const getSavedMovies = () => {
         mainApi.getMovies()
             .then(({ data }) => {
-                setSavedCards(data);
-                data.length && setCardsSavedMovies(data);
+                const newCards = [];
+                data.forEach(c => {
+                    if (c.owner === currentUserState.id) {
+                        newCards.push(c);
+                    }
+                });
+                setSavedCards(newCards);
+                setCardsSavedMovies(newCards);
             })
             .catch(err => {
                 console.error(err);
             })
     }
 
+    React.useEffect(() => {
+        getSavedMovies();
+    }, [currentUserState?.id]);
+
     const handleMovieSearch = (keyword) => {
         setIsLoading(true);
         moviesApi.getMovies()
             .then((cards) => {
                 cards = filterCards(keyword, cards);
-                console.log('found: ', cards.length);
-
                 setKeyword(keyword);
                 setTotalCards(cards);
                 setCards(cards.slice(0, initialCardsLength));
-
                 localStorage.setItem('keyword', keyword);
                 localStorage.setItem('isShortFilm', isShortFilm);
                 localStorage.setItem('cards', JSON.stringify(cards));
@@ -211,6 +269,14 @@ function App() {
             .finally(() => {
                 setIsLoading(false);
             });
+    }
+
+    const handleSavedMovieSearch = (keyword) => {
+        setIsLoading(true);
+        const cards = filterCards(keyword, savedCards);
+        setKeywordSavedMovies(keyword);
+        setCardsSavedMovies(cards);
+        setIsLoading(false);
     }
 
     const handleShowMoreMovies = () => {
@@ -233,21 +299,24 @@ function App() {
                 nameRU: card.nameRU,
                 nameEN: card.nameEN,
             };
-        // console.log(isLiked, savedCard);
 
         mainApi.changeLikeCardStatus(savedCard, isLiked)
             .then((newCard) => {
-                let newArr = [];
+                let newCards = [];
                 if (isLiked) {
-                    newArr = savedCards.map((card) => card._id !== savedCard._id && card);
+                    savedCards.forEach(c => {
+                        if (c._id !== savedCard._id) {
+                            newCards.push(c);
+                        }
+                    })
                 } else {
-                    newArr = [...savedCards, newCard.data];
+                    newCards = [...savedCards, newCard.data];
                 }
-                setSavedCards(newArr);
-                setCardsSavedMovies(newArr);
+                setSavedCards(newCards);
+                setCardsSavedMovies(newCards);
             })
             .catch(err => {
-                console.log(err);
+                console.error(err);
             })
     }
 
@@ -263,22 +332,9 @@ function App() {
             });
     }
 
-    const handleSavedMovieSearch = (keyword) => {
-        setIsLoading(true);
-
-        const cards = filterCards(keyword, savedCards);
-        console.log('found: ', cards.length);
-
-        setKeywordSavedMovies(keyword);
-        setCardsSavedMovies(cards);
-
-        setIsLoading(false);
-    }
-
     const handleSavedMoviesRemove = (cardId) => {
         mainApi.removeLike(cardId)
             .then((newCard) => {
-                console.log(newCard);
                 const newCards = []
                 savedCards.forEach(c => {
                     if (c._id !== cardId) {
@@ -290,7 +346,7 @@ function App() {
                 setCardsSavedMovies(newCards);
             })
             .catch(err => {
-                console.log(err);
+                console.error(err);
             })
     }
 
@@ -339,7 +395,7 @@ function App() {
                                 keyword={keywordSavedMovies}
                                 cards={cardsSavedMovies}
                                 onSearchMovie={handleSavedMovieSearch}
-                                onFilterCheckboxClick={handleFilterCheckboxClick}
+                                onFilterCheckboxClick={handleFilterCheckboxSavedMovies}
                                 onCardRemove={handleSavedMoviesRemove}
                                 isShortFilm={isShortFilm}
                                 isLoading={isLoading}
@@ -348,7 +404,7 @@ function App() {
                     />
                     <Route path='/signup'
                         element={
-                            currentUserState?.email ? <Navigate to="/saved-movies" replace /> :
+                            currentUserState?.email ? <Navigate to="/movies" replace /> :
                                 <Register
                                     name='register'
                                     buttonText='Зарегистрироваться'
@@ -359,7 +415,7 @@ function App() {
                     />
                     <Route path='/signin'
                         element={
-                            currentUserState?.email ? <Navigate to="/saved-movies" replace /> :
+                            currentUserState?.email ? <Navigate to="/movies" replace /> :
                                 <Login
                                     name='login'
                                     buttonText='Войти'
@@ -370,22 +426,20 @@ function App() {
                     />
                     <Route path='/profile'
                         element={
-                            !currentUserState?.email ? <Navigate to="/" replace /> :
-                                <ProtectedRoute
-                                    element={Profile}
-                                    loggedIn={currentUserState}
-                                    isMenuOpen={isMenuOpen}
-                                    onClosePopup={closePopup}
-                                    onOpenPopup={handleMenuClick}
-                                    onUpdateUser={handleUpdateUser}
-                                    message={message}
-                                    currentUser={currentUserState}
-                                    onSignOut={handleSignOut}
-                                />
+                            <ProtectedRoute
+                                element={Profile}
+                                loggedIn={currentUserState}
+                                isMenuOpen={isMenuOpen}
+                                onClosePopup={closePopup}
+                                onOpenPopup={handleMenuClick}
+                                onUpdateUser={handleUpdateUser}
+                                message={message}
+                                currentUser={currentUserState}
+                                onSignOut={handleSignOut}
+                            />
                         }
                     />
-                    {/* <Route path='/navigation' element={<Navigation isOpen={true} />} />
-                <Route path='/404' element={<PageNotFound />} /> */}
+                    <Route path="*" element={<PageNotFound />} />
                 </Routes>
             </BrowserRouter>
         </CurrentUserContext.Provider>
