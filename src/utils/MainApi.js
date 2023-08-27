@@ -8,10 +8,7 @@ class Api {
     }
 
     _request(url, options) {
-        return fetch(url, {
-            credentials:  'include',
-            ...options
-        })
+        return fetch(url, options)
             .then(res => {
                 return this._getResponseData(res);
             })
@@ -26,12 +23,14 @@ class Api {
 
     getMovies() {
         return this._request(`${this._baseUrl}/movies`, {
+            credentials: 'include',
             headers: this._headers
         })
     }
 
     addLike(card) {
         return this._request(`${this._baseUrl}/movies`, {
+            credentials: 'include',
             headers: this._headers,
             method: 'POST',
             body: JSON.stringify(card)
@@ -40,6 +39,7 @@ class Api {
 
     removeLike(cardId) {
         return this._request(`${this._baseUrl}/movies/${cardId}`, {
+            credentials: 'include',
             headers: this._headers,
             method: 'DELETE'
         })
@@ -55,6 +55,7 @@ class Api {
 
     updateUserInfo(userInfo) {
         return this._request(`${this._baseUrl}/users/me`, {
+            credentials: 'include',
             headers: this._headers,
             method: 'PATCH',
             body: JSON.stringify(userInfo)
@@ -74,7 +75,7 @@ class Api {
 
     login(email, password) {
         return this._request(`${this._baseUrl}/signin`, {
-            // credentials: 'include',
+            credentials: 'include',
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
@@ -86,7 +87,7 @@ class Api {
 
     logout() {
         return this._request(`${this._baseUrl}/signout`, {
-            // credentials: 'include',
+            credentials: 'include',
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
@@ -97,7 +98,7 @@ class Api {
 
     validateToken() {
         return this._request(`${this._baseUrl}/users/me`, {
-            // credentials: 'include',
+            credentials: 'include',
             method: 'GET'
         });
     };
