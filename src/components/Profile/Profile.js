@@ -3,24 +3,47 @@ import "./Profile.css";
 import Header from "../Header/Header";
 import NavMovieTab from "../NavMovieTab/NavMovieTab";
 import Navigation from "../Navigation/Navigation";
-import { Link } from "react-router-dom";
 import { useFormAndValidation } from "../../hooks/useFormAndValidation";
+import { profileEditSuccessMessage } from "../../utils/constants";
 
 function Profile({ currentUser, onUpdateUser, isMenuOpen, onClosePopup, onOpenPopup, onSignOut, message }) {
     const initialState = { name: '' };
     const { values, handleChange, errors, isValid, setValues, resetForm } = useFormAndValidation(initialState, currentUser.name);
     const [isEdit, setIsEdit] = React.useState(false);
+    const [formMessage, setFormMessage] = React.useState('');
+    const [isShowMessage, setIsShowMessage] = React.useState(false);
 
+    React.useEffect(() => {
+        setFormMessage('');
+        setIsShowMessage(false);
+    }, []);
+    
     React.useEffect(() => {
         resetForm(initialState, initialState);
         setValues({ name: currentUser.name });
-    }, [currentUser, isEdit]);
+    }, [currentUser]);
+    
+    React.useEffect(() => {
+        if (isShowMessage) {
+            setFormMessage(message);
+        }
+    }, [message, isShowMessage]);
+
+    // при переключении на режим редактирования, сообщение должно пропасть
+    React.useEffect(() => {
+        if (isEdit) {
+            setFormMessage('');
+            setIsShowMessage(false);
+        }
+    }, [isEdit]);
+
 
     function handleSubmit(e) {
         e.preventDefault();
         if (isValid) {
+            setIsShowMessage(true);
             onUpdateUser({ name: values.name });
-            !message && setIsEdit(false);
+            setIsEdit(!message === profileEditSuccessMessage);
         }
     }
 
@@ -39,14 +62,23 @@ function Profile({ currentUser, onUpdateUser, isMenuOpen, onClosePopup, onOpenPo
                         <input className={`profile__input ${errors.email && "form__input-error-text"}`} readOnly={true} disabled={true} id="email" value={currentUser.email} onChange={handleChange} name="email" type="email" placeholder="" minLength="2" maxLength="40" required />
                     </label>
                     <span className="profile__input-error">{errors.email}</span>
-
-                    <div className={`profile__buttons ${!isEdit && "profile__buttons_visible"}`}>
-                        <button className="profile__btn" onClick={() => setIsEdit(true)} type="button">Редактировать</button>
-                        <button className="profile__btn profile__btn_color_red" onClick={onSignOut} type="button">Выйти из аккаунта</button>
+                    {/* сообщение и кнопка сохранения */}
+                    <div className="profile__buttons">
+                        <span className={`profile__message ${formMessage === profileEditSuccessMessage && "profile__message_color_green"}`}>
+                            {formMessage}
+                        </span>
+                        <button className={`form__save-btn ${!isEdit && "profile__element_hidden"} ${isValid && "form__save-btn_active"}`} type="submit">
+                            Сохранить
+                        </button>
                     </div>
-                    <div className={`profile__buttons ${isEdit && "profile__buttons_visible"}`}>
-                        <span className="profile__message">{message}</span>
-                        <button className={`form__save-btn ${isValid && "form__save-btn_active"}`} type="submit">Сохранить</button>
+                    {/* кнопки редактрования и выхода из аакаунта */}
+                    <div className={`profile__buttons ${isEdit && "profile__element_hidden"}`}>
+                        <button className="profile__btn" onClick={() => setIsEdit(true)} type="button">
+                            Редактировать
+                        </button>
+                        <button className="profile__btn profile__btn_color_red" onClick={onSignOut} type="button">
+                            Выйти из аккаунта
+                        </button>
                     </div>
                 </form>
             </main>

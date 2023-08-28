@@ -5,15 +5,26 @@ import "./AuthForm.css";
 function AuthForm({ onSubmit, name, buttonText, isRegister, message }) {
     const initialState = { name: '', email: '', password: '' };
     const { values, handleChange, errors, isValid, setValues, resetForm } = useFormAndValidation(initialState);
+    const [formMessage, setFormMessage] = React.useState('');
+    const [isShowMessage, setIsShowMessage] = React.useState(false);
 
     React.useEffect(() => {
+        setFormMessage('');
+        setIsShowMessage(false);
         resetForm(initialState, initialState);
     }, []);
+
+    React.useEffect(() => {
+        if (isShowMessage) {
+            setFormMessage(message);
+        }
+    }, [message, isShowMessage]);
 
 
     function handleSubmit(e) {
         e.preventDefault();
         if (isValid) {
+            setIsShowMessage(true);
             onSubmit(values.email, values.password, values.name);
         }
     }
@@ -35,7 +46,7 @@ function AuthForm({ onSubmit, name, buttonText, isRegister, message }) {
                 <input className={`form__input ${errors.password && "form__input-error-text"}`} id="password" value={values.password} onChange={handleChange} name="password" type="password" placeholder="Пароль" minLength="6" maxLength="200" required />
                 <span className="form__input-error">{errors.password}</span>
             </label>
-            <span className={`form__message ${!isRegister && "form__message_margin_large"}`}>{message}</span>
+            <span className={`form__message ${!isRegister && "form__message_margin_large"}`}>{formMessage}</span>
             <button className={`form__save-btn ${isValid && "form__save-btn_active"}`} type="submit">{buttonText}</button>
         </form>
     );

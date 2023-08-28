@@ -23,6 +23,13 @@ export function useFormAndValidation(inputValues, oldName = '') {
       }
     }
 
+    if (name === 'email' && value) {
+      if (!value.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g)) {
+        errorMessage = 'Неправильный формат почты';
+        setIsValid(false);
+      }
+    }
+
     setValues({ ...values, [name]: value });
     setErrors({ ...errors, [name]: errorMessage });
   };

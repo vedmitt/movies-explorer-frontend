@@ -11,7 +11,7 @@ import ProtectedRoute from "../ProtectedRoute.js/ProtectedRoute.js";
 import { moviesApi } from "../../utils/MoviesApi.js";
 import { mainApi } from "../../utils/MainApi.js";
 import { currentUser, CurrentUserContext } from "../../contexts/CurrentUserContext.js";
-import { moviesApiBaseUrl } from "../../utils/constants.js";
+import { moviesApiBaseUrl, profileEditSuccessMessage } from "../../utils/constants.js";
 
 function App() {
     const [currentUserState, setCurrentUser] = React.useState(currentUser);
@@ -35,6 +35,7 @@ function App() {
     const handleRegisterUser = (email, password, name) => {
         mainApi.register(name, email, password)
             .then(res => {
+                setMessage('');
                 // авторизация и перенаправление на Фильмы
                 handleLoginUser(email, password);
             }).catch(err => {
@@ -47,6 +48,7 @@ function App() {
     const handleLoginUser = (email, password) => {
         mainApi.login(email, password)
             .then(res => {
+                setMessage('');
                 // токен создан и записан в куки
                 // валидируем токен
                 handleValidateToken();
@@ -250,12 +252,12 @@ function App() {
     const handleUpdateUser = (userInfo) => {
         mainApi.updateUserInfo(userInfo)
             .then(newUserInfo => {
+                setMessage(profileEditSuccessMessage);
                 setCurrentUser({ id: newUserInfo.data._id, name: newUserInfo.data.name, email: newUserInfo.data.email });
-                setMessage('');
             })
             .catch(err => {
-                console.error(err);
                 setMessage('При обновлении профиля произошла ошибка.');
+                console.error(err);
             });
     }
 

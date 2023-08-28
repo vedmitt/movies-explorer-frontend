@@ -74,16 +74,21 @@
 }
 
 .profile__buttons {
+    display: flex;
     width: 100%;
-    display: none;
     flex-direction: column;
     justify-content: center;
     margin: 202px auto 0;
     padding: 0;
 }
 
-.profile__buttons_visible {
-    display: flex;
+.profile__buttons:last-of-type {
+    margin: 0;
+    padding: 0;
+}
+
+.profile__element_hidden {
+    display: none;
 }
 
 .profile__message {
@@ -96,6 +101,10 @@
     line-height: normal;
     padding: 0 0 20px;
     margin: 0;
+}
+
+.profile__message_color_green {
+    color: green;
 }
 
 .profile__btn {
