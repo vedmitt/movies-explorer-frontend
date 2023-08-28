@@ -11,7 +11,7 @@ import ProtectedRoute from "../ProtectedRoute.js/ProtectedRoute.js";
 import { moviesApi } from "../../utils/MoviesApi.js";
 import { mainApi } from "../../utils/MainApi.js";
 import { currentUser, CurrentUserContext } from "../../contexts/CurrentUserContext.js";
-import { moviesApiBaseUrl, profileEditSuccessMessage } from "../../utils/constants.js";
+import { initialCardsLength1280, initialCardsLength320, initialCardsLength768, longTimeout, moviesApiBaseUrl, profileEditSuccessMessage, rowLength1280, rowLength320, rowLength768, shortFilmDuration } from "../../utils/constants.js";
 
 function App() {
     const [currentUserState, setCurrentUser] = React.useState(currentUser);
@@ -20,8 +20,8 @@ function App() {
     const [isLoading, setIsLoading] = React.useState(false);
     const [message, setMessage] = React.useState(''); // сообщение для форм
     // параметры для отображения фильмов
-    const [rowLength, setRowLength] = React.useState(3);  // длина ряда карточек
-    const [initialCardsLength, setInitialCardsLength] = React.useState(12);
+    const [rowLength, setRowLength] = React.useState(rowLength1280);  // длина ряда карточек
+    const [initialCardsLength, setInitialCardsLength] = React.useState(initialCardsLength1280);
     const [isLastRow, setIsLastRow] = React.useState(false);
     // текст для поиска
     const [keyword, setKeyword] = React.useState('');
@@ -37,6 +37,7 @@ function App() {
 
 
     const handleRegisterUser = (email, password, name) => {
+        setIsLoading(true);
         mainApi.register(name, email, password)
             .then(res => {
                 setMessage('');
@@ -46,10 +47,13 @@ function App() {
                 setMessage(err === 'Ошибка: 409' ?
                     'Пользователь с таким email уже существует.' :
                     'При регистрации пользователя произошла ошибка.');
+            }).finally(() => {
+                setIsLoading(false);
             });
     }
 
     const handleLoginUser = (email, password) => {
+        setIsLoading(true);
         mainApi.login(email, password)
             .then(res => {
                 setMessage('');
@@ -60,7 +64,9 @@ function App() {
                 setMessage((err === 'Ошибка: 401' && 'Вы ввели неправильный логин или пароль.') ||
                     (err === 'Ошибка: 400' && 'При авторизации произошла ошибка. Токен не передан или передан не в том формате.') ||
                     'При авторизации произошла ошибка. Переданный токен некорректен.');
-            })
+            }).finally(() => {
+                setIsLoading(false);
+            });
     }
 
     const handleValidateToken = () => {
@@ -80,6 +86,7 @@ function App() {
     }
 
     const handleUpdateUser = (userInfo) => {
+        setIsLoading(true);
         mainApi.updateUserInfo(userInfo)
             .then(newUserInfo => {
                 setMessage(profileEditSuccessMessage);
@@ -92,6 +99,9 @@ function App() {
             .catch(err => {
                 setMessage('При обновлении профиля произошла ошибка.');
                 console.error(err);
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     }
 
@@ -147,7 +157,7 @@ function App() {
     const filterCardsByDuration = (cards) => {
         const newCards = [];
         cards.forEach(card => {
-            if (card.duration <= 40) {
+            if (card.duration <= shortFilmDuration) {
                 newCards.push(card);
             }
         })
@@ -156,6 +166,10 @@ function App() {
 
     const handleMovieSearchClick = (key) => {
         setIsLoading(true);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, longTimeout);
+
         let cards = searchCardsByWord(initialCards, key);
         console.log('found cards', cards.length);
 
@@ -177,10 +191,14 @@ function App() {
         }
         setFoundCards(cards);
         setVisibleCards(cards.slice(0, initialCardsLength));
-        setIsLoading(false);
     }
 
     const handleFilterCheckboxClick = (checkboxState) => {
+        setIsLoading(true);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 500);
+
         setIsShortFilm(!checkboxState);
         localStorage.setItem('isShortFilm', !isShortFilm);
         if (!checkboxState) { // если чекбокс включен
@@ -299,7 +317,10 @@ function App() {
 
     // отображение сохранненных в лок хранилище карточек (если есть)
     React.useEffect(() => {
-        setIsLoading(true);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, longTimeout);
+
         const savedCheckbox = localStorage.getItem('isShortFilm');
         const savedKeyword = localStorage.getItem('keyword');
         const savedCards = JSON.parse(localStorage.getItem('cards'));
@@ -326,7 +347,6 @@ function App() {
             setFoundCards(initialCards);
             setVisibleCards(initialCards.slice(0, initialCardsLength));
         }
-        setIsLoading(false);
     }, [initialCards]);
 
     // перерисовка в случае ресайза
@@ -350,14 +370,14 @@ function App() {
     // корректное отображение ряда карточек
     React.useEffect(() => {
         if (windowWidth > 1087) {
-            setInitialCardsLength(12);
-            setRowLength(3);
+            setInitialCardsLength(initialCardsLength1280);
+            setRowLength(rowLength1280);
         } else if (windowWidth > 688) {
-            setInitialCardsLength(8);
-            setRowLength(2);
+            setInitialCardsLength(initialCardsLength768);
+            setRowLength(rowLength768);
         } else {
-            setInitialCardsLength(5);
-            setRowLength(2);
+            setInitialCardsLength(initialCardsLength320);
+            setRowLength(rowLength320);
         }
     }, [initialCardsLength, rowLength, windowWidth])
 
@@ -427,7 +447,6 @@ function App() {
                                 onSearchMovie={searchCardsByWord}
                                 onFilterCheckbox={filterCardsByDuration}
                                 onCardRemove={handleSavedMoviesRemove}
-                                isLoading={isLoading}
                             />
                         }
                     />
@@ -439,6 +458,7 @@ function App() {
                                     buttonText='Зарегистрироваться'
                                     onRegister={handleRegisterUser}
                                     message={message}
+                                    isLoading={isLoading}
                                 />
                         }
                     />
@@ -450,6 +470,7 @@ function App() {
                                     buttonText='Войти'
                                     onLogin={handleLoginUser}
                                     message={message}
+                                    isLoading={isLoading}
                                 />
                         }
                     />
@@ -465,6 +486,7 @@ function App() {
                                 message={message}
                                 currentUser={currentUserState}
                                 onSignOut={handleSignOut}
+                                isLoading={isLoading}
                             />
                         }
                     />

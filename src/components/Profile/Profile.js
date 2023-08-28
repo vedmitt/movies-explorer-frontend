@@ -6,7 +6,7 @@ import Navigation from "../Navigation/Navigation";
 import { useFormAndValidation } from "../../hooks/useFormAndValidation";
 import { profileEditSuccessMessage } from "../../utils/constants";
 
-function Profile({ currentUser, onUpdateUser, isMenuOpen, onClosePopup, onOpenPopup, onSignOut, message }) {
+function Profile({ currentUser, onUpdateUser, isMenuOpen, onClosePopup, onOpenPopup, onSignOut, message, isLoading }) {
     const initialState = { name: '' };
     const { values, handleChange, errors, isValid, setValues, resetForm } = useFormAndValidation(initialState, currentUser.name);
     const [isEdit, setIsEdit] = React.useState(false);
@@ -54,7 +54,7 @@ function Profile({ currentUser, onUpdateUser, isMenuOpen, onClosePopup, onOpenPo
                 <h2 className="profile__title">Привет, {currentUser?.name}!</h2>
                 <form onSubmit={handleSubmit} name="form-profile" className="form profile__form" noValidate>
                     <label className="profile__label">Имя
-                        <input className={`profile__input ${errors.name && "form__input-error-text"}`} readOnly={!isEdit} disabled={!isEdit} id="name" value={values.name} onChange={handleChange} name="name" type="text" placeholder="" minLength="2" maxLength="40" required />
+                        <input className={`profile__input ${errors.name && "form__input-error-text"}`} readOnly={!isEdit || isLoading} disabled={!isEdit || isLoading} id="name" value={values.name} onChange={handleChange} name="name" type="text" placeholder="" minLength="2" maxLength="40" required />
                     </label>
                     <span className="profile__input-error">{errors.name}</span>
 
@@ -67,7 +67,7 @@ function Profile({ currentUser, onUpdateUser, isMenuOpen, onClosePopup, onOpenPo
                         <span className={`profile__message ${formMessage === profileEditSuccessMessage && "profile__message_color_green"}`}>
                             {formMessage}
                         </span>
-                        <button className={`form__save-btn ${!isEdit && "profile__element_hidden"} ${isValid && "form__save-btn_active"}`} type="submit">
+                        <button className={`form__save-btn ${!isEdit && "profile__element_hidden"} ${isValid && !isLoading && "form__save-btn_active"}`} type="submit">
                             Сохранить
                         </button>
                     </div>

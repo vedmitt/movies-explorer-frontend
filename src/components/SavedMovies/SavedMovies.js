@@ -6,6 +6,7 @@ import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import NavMovieTab from "../NavMovieTab/NavMovieTab";
 import Navigation from "../Navigation/Navigation";
+import { longTimeout, shortTimeout } from "../../utils/constants";
 
 function SavedMovies({
     isMenuOpen,
@@ -15,7 +16,8 @@ function SavedMovies({
     onSearchMovie,
     onFilterCheckbox,
     onCardRemove,
-    isLoading }) {
+}) {
+    const [isLoading, setIsLoading] = React.useState(false);
     const [checkbox, setCheckbox] = React.useState(false);
     const [searchWord, setSearchWord] = React.useState('');
     const [totalCards, setTotalCards] = React.useState(cards);
@@ -23,6 +25,7 @@ function SavedMovies({
     const [visibleCards, setVisibleCards] = React.useState(['']);
 
     React.useEffect(() => {
+        setIsLoading(false);
         setCheckbox(false);
         setSearchWord('');
     }, []);
@@ -46,8 +49,12 @@ function SavedMovies({
     }, [cards]);
 
     const handleMovieSearchClick = (searchWord) => {
+        setIsLoading(true);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, longTimeout);
+
         console.log('word', searchWord, checkbox);
-        // setIsLoading(true);
         let newCards = onSearchMovie(totalCards, searchWord);
         console.log('found cards', newCards.length);
         setFoundCards(newCards);
@@ -60,10 +67,14 @@ function SavedMovies({
             setVisibleCards(newCards);
         }
         setCheckbox(checkbox);
-        // setIsLoading(false);
     }
 
     const handleCheckboxClick = () => {
+        setIsLoading(true);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, shortTimeout);
+
         setCheckbox(!checkbox);
         if (!checkbox) {
             const shortMovies = onFilterCheckbox(foundCards);
