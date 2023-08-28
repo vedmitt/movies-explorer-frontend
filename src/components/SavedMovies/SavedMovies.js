@@ -34,7 +34,6 @@ function SavedMovies({
         setTotalCards(cards);
 
         if (cards?.length > 0) {
-            console.log(cards.length, totalCards.length);
             // если карточка была удалена
             if (cards.length < totalCards.length) {
                 setFoundCards(foundCards.filter(el => cards.indexOf(el) > -1));  // исключим из списка найденных
@@ -54,9 +53,7 @@ function SavedMovies({
             setIsLoading(false);
         }, longTimeout);
 
-        console.log('word', searchWord, checkbox);
-        let newCards = onSearchMovie(totalCards, searchWord);
-        console.log('found cards', newCards.length);
+        const newCards = onSearchMovie(totalCards, searchWord);
         setFoundCards(newCards);
 
         // фильтруем результат

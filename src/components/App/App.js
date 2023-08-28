@@ -82,6 +82,8 @@ function App() {
             })
             .catch(err => {
                 console.error(err);
+                // если с токеном что-то случилось, делаем полный логаут
+                handleSignOut();
             })
     }
 
@@ -171,7 +173,6 @@ function App() {
         }, longTimeout);
 
         let cards = searchCardsByWord(initialCards, key);
-        console.log('found cards', cards.length);
 
         // сохраняем поисковое слово
         setKeyword(key);
@@ -203,13 +204,11 @@ function App() {
         localStorage.setItem('isShortFilm', !isShortFilm);
         if (!checkboxState) { // если чекбокс включен
             const shortFilms = filterCardsByDuration(foundCards);
-            console.log('short movies', shortFilms.length);
             setLongFilmCards(foundCards);
             setFoundCards(shortFilms);
             setVisibleCards(shortFilms.slice(0, initialCardsLength));
             localStorage.setItem('cards', JSON.stringify(foundCards));
         } else {
-            console.log('return the result', longFilmCards.length);
             setFoundCards(longFilmCards);
             setVisibleCards(longFilmCards.slice(0, initialCardsLength));
             localStorage.setItem('cards', JSON.stringify(longFilmCards));
@@ -287,7 +286,6 @@ function App() {
         moviesApi.getMovies()
             .then((cards) => {
                 setInitialCards(cards);
-                console.log('initial cards length', cards.length);
             })
             .catch(err => {
                 console.error(err);
