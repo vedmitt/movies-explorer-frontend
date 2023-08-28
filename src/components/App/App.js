@@ -25,18 +25,15 @@ function App() {
     const [isLastRow, setIsLastRow] = React.useState(false);
     // текст для поиска
     const [keyword, setKeyword] = React.useState('');
-    const [keywordSM, setKeywordSM] = React.useState('');
     // переключатели короткометражек
     const [isShortFilm, setIsShortFilm] = React.useState(false);
-    const [isShortFilmSavedMovies, setIsShortFilmSavedMovies] = React.useState(false);
     // списки фильмов
     const [initialCards, setInitialCards] = React.useState([]);  // все фильмы с битфильм
     const [longFilmCards, setLongFilmCards] = React.useState([]);  // без фильтра Короткометражки
     const [favoredCards, setFavoredCards] = React.useState([]); // все сохраненные карточки
 
-    const [foundCards, setFoundCards] = React.useState([]);  // все найденные или сохраненные фильмы
+    const [foundCards, setFoundCards] = React.useState([]);  // результирующие фильмы
     const [visibleCards, setVisibleCards] = React.useState(['']);  // карточки в зоне видимости
-    const [visibleCardsSM, setVisibleCardsSM] = React.useState(['']); // сохраненные карточки (используются только в Сохр фильмах!)
 
 
     const handleRegisterUser = (email, password, name) => {
@@ -102,15 +99,20 @@ function App() {
         mainApi.logout()
             .then(res => {
                 setCurrentUser(null);
+                setWindowWidth(window.innerWidth);
+                setMenuOpen(false);
+                setIsLoading(false);
+                setMessage('');
+                setRowLength(3);
+                setInitialCardsLength(12);
+                setIsLastRow(false);
                 setKeyword('');
-                setKeywordSM('');
                 setIsShortFilm(false);
                 setInitialCards([]);
-                setFoundCards([]);
+                setLongFilmCards([]);
                 setFavoredCards([]);
+                setFoundCards([]);
                 setVisibleCards(['']);
-                setVisibleCardsSM(['']);
-                setMessage('');
                 localStorage.removeItem('keyword');
                 localStorage.removeItem('isShortFilm');
                 localStorage.removeItem('cards');
@@ -125,28 +127,6 @@ function App() {
 
     const handleMenuClick = () => {
         setMenuOpen(true);
-    }
-
-    const getSavedMovies = () => {
-        mainApi.getMovies()
-            .then(({ data }) => {
-                const newCards = [];
-                data.forEach(c => {
-                    if (c.owner === currentUserState.id) {
-                        newCards.push(c);
-                    }
-                });
-                if (!newCards.length) {
-                    setFavoredCards([]);
-                    setVisibleCardsSM(['']);
-                } else if (newCards.length > 0) {
-                    setFavoredCards(newCards);
-                    setVisibleCardsSM(newCards);
-                }
-            })
-            .catch(err => {
-                console.error(err);
-            })
     }
 
     const searchCardsByWord = (cards, keyword) => {
@@ -203,7 +183,6 @@ function App() {
     const handleFilterCheckboxClick = (checkboxState) => {
         setIsShortFilm(!checkboxState);
         localStorage.setItem('isShortFilm', !isShortFilm);
-        // console.log(!checkboxState);
         if (!checkboxState) { // если чекбокс включен
             const shortFilms = filterCardsByDuration(foundCards);
             console.log('short movies', shortFilms.length);
@@ -217,24 +196,6 @@ function App() {
             setVisibleCards(longFilmCards.slice(0, initialCardsLength));
             localStorage.setItem('cards', JSON.stringify(longFilmCards));
         }
-    }
-
-    const handleSMSearchClick = (keyword) => {
-        // setIsLoading(true);
-        // const cards = filterCards(keyword, favoredCards, isShortFilmSavedMovies);
-        // setKeywordSM(keyword);
-        // setVisibleCardsSM(cards);
-        // setIsLoading(false);
-    }
-
-    const handleFilterCheckboxSMClick = () => {
-        // if (!isShortFilmSavedMovies) {
-        //     const sortedCards = filterCardsByDuration(favoredCards);
-        //     setVisibleCardsSM(sortedCards);
-        // } else {
-        //     setVisibleCardsSM(favoredCards);
-        // }
-        // setIsShortFilmSavedMovies(!isShortFilmSavedMovies);
     }
 
     const handleShowMoreMovies = () => {
@@ -272,10 +233,8 @@ function App() {
                 }
                 if (!newCards.length) {
                     setFavoredCards([]);
-                    setVisibleCardsSM(['']);
                 } else if (newCards.length > 0) {
                     setFavoredCards(newCards);
-                    setVisibleCardsSM(newCards);
                 }
             })
             .catch(err => {
@@ -294,10 +253,8 @@ function App() {
                 })
                 if (!newCards.length) {
                     setFavoredCards([]);
-                    setVisibleCardsSM(['']);
                 } else if (newCards.length > 0) {
                     setFavoredCards(newCards);
-                    setVisibleCardsSM(newCards);
                 }
             })
             .catch(err => {
@@ -319,9 +276,26 @@ function App() {
             });
     }, []);
 
-    // React.useEffect(() => {
-    //     getSavedMovies();
-    // }, [currentUserState?.id]);
+    // загрузка избранных фильмов
+    React.useEffect(() => {
+        mainApi.getMovies()
+            .then(({ data }) => {
+                const newCards = [];
+                data.forEach(c => {
+                    if (c.owner === currentUserState.id) {
+                        newCards.push(c);
+                    }
+                });
+                if (!newCards.length) {
+                    setFavoredCards([]);
+                } else if (newCards.length > 0) {
+                    setFavoredCards(newCards);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+            })
+    }, [currentUserState?.id]);
 
     // отображение сохранненных в лок хранилище карточек (если есть)
     React.useEffect(() => {
@@ -449,12 +423,10 @@ function App() {
                                 isMenuOpen={isMenuOpen}
                                 onClosePopup={closePopup}
                                 onOpenPopup={handleMenuClick}
-                                keyword={keywordSM}
-                                cards={visibleCardsSM}
-                                onSearchMovie={handleSMSearchClick}
-                                onFilterCheckboxClick={handleFilterCheckboxSMClick}
+                                cards={favoredCards}
+                                onSearchMovie={searchCardsByWord}
+                                onFilterCheckbox={filterCardsByDuration}
                                 onCardRemove={handleSavedMoviesRemove}
-                                isShortFilm={isShortFilmSavedMovies}
                                 isLoading={isLoading}
                             />
                         }
