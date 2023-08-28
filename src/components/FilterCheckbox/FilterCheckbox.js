@@ -4,7 +4,12 @@ import "./FilterCheckbox.css";
 function FilterCheckbox({ isShortFilm, onFilterCheckboxClick }) {
     return (
         <div className="filter-checkbox">
-            <button className={`filter-checkbox__icon ${isShortFilm && "filter-checkbox__icon_active"}`} onClick={onFilterCheckboxClick} type="button"></button>
+            <button
+                className={`filter-checkbox__icon ${isShortFilm && "filter-checkbox__icon_active"}`}
+                onClick={() => onFilterCheckboxClick(isShortFilm)}
+                type="button"
+            >
+            </button>
             <p className="filter-checkbox__item">Короткометражки</p>
         </div>
     );

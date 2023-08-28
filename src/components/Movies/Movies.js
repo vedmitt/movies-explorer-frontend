@@ -15,10 +15,10 @@ function Movies({
     isLoading,
     isMenuOpen,
     isLastRow,
-    onSearchMovie,
-    onShowMoreMovies,
     onClosePopup,
     onOpenPopup,
+    onSearchMovie,
+    onShowMoreMovies,
     onFilterCheckboxClick,
     onCardLike,
 }) {

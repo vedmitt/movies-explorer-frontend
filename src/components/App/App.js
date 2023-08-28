@@ -15,21 +15,28 @@ import { moviesApiBaseUrl, profileEditSuccessMessage } from "../../utils/constan
 
 function App() {
     const [currentUserState, setCurrentUser] = React.useState(currentUser);
+    const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
     const [isMenuOpen, setMenuOpen] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
-    const [totalCards, setTotalCards] = React.useState([]);  // все фильмы с битфильм
-    const [cards, setCards] = React.useState(['']);  // карточки в зоне видимости
-    const [savedCards, setSavedCards] = React.useState([]); // все сохраненные карточки
-    const [cardsSavedMovies, setCardsSavedMovies] = React.useState(['']); // сохраненные карточки (используются только в Сохр фильмах!)
+    const [message, setMessage] = React.useState(''); // сообщение для форм
+    // параметры для отображения фильмов
     const [rowLength, setRowLength] = React.useState(3);  // длина ряда карточек
     const [initialCardsLength, setInitialCardsLength] = React.useState(12);
     const [isLastRow, setIsLastRow] = React.useState(false);
-    const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+    // текст для поиска
     const [keyword, setKeyword] = React.useState('');
-    const [keywordSavedMovies, setKeywordSavedMovies] = React.useState('');
+    const [keywordSM, setKeywordSM] = React.useState('');
+    // переключатели короткометражек
     const [isShortFilm, setIsShortFilm] = React.useState(false);
     const [isShortFilmSavedMovies, setIsShortFilmSavedMovies] = React.useState(false);
-    const [message, setMessage] = React.useState('');
+    // списки фильмов
+    const [initialCards, setInitialCards] = React.useState([]);  // все фильмы с битфильм
+    const [longFilmCards, setLongFilmCards] = React.useState([]);  // без фильтра Короткометражки
+    const [favoredCards, setFavoredCards] = React.useState([]); // все сохраненные карточки
+
+    const [foundCards, setFoundCards] = React.useState([]);  // все найденные или сохраненные фильмы
+    const [visibleCards, setVisibleCards] = React.useState(['']);  // карточки в зоне видимости
+    const [visibleCardsSM, setVisibleCardsSM] = React.useState(['']); // сохраненные карточки (используются только в Сохр фильмах!)
 
 
     const handleRegisterUser = (email, password, name) => {
@@ -75,17 +82,34 @@ function App() {
             })
     }
 
+    const handleUpdateUser = (userInfo) => {
+        mainApi.updateUserInfo(userInfo)
+            .then(newUserInfo => {
+                setMessage(profileEditSuccessMessage);
+                setCurrentUser({
+                    id: newUserInfo.data._id,
+                    name: newUserInfo.data.name,
+                    email: newUserInfo.data.email
+                });
+            })
+            .catch(err => {
+                setMessage('При обновлении профиля произошла ошибка.');
+                console.error(err);
+            });
+    }
+
     const handleSignOut = () => {
         mainApi.logout()
             .then(res => {
                 setCurrentUser(null);
                 setKeyword('');
-                setKeywordSavedMovies('');
+                setKeywordSM('');
                 setIsShortFilm(false);
-                setTotalCards([]);
-                setSavedCards([]);
-                setCards(['']);
-                setCardsSavedMovies(['']);
+                setInitialCards([]);
+                setFoundCards([]);
+                setFavoredCards([]);
+                setVisibleCards(['']);
+                setVisibleCardsSM(['']);
                 setMessage('');
                 localStorage.removeItem('keyword');
                 localStorage.removeItem('isShortFilm');
@@ -103,41 +127,39 @@ function App() {
         setMenuOpen(true);
     }
 
-    const handleFilterCheckboxClick = () => {
-        if (!isShortFilm) {
-            const sortedCards = filterCardsByDuration(totalCards);
-            setTotalCards(sortedCards);
-            setCards(sortedCards.slice(0, initialCardsLength));
-            localStorage.setItem('isShortFilm', !isShortFilm);
-            localStorage.setItem('cards', JSON.stringify(sortedCards));
-        }
-        setIsShortFilm(!isShortFilm);
+    const getSavedMovies = () => {
+        mainApi.getMovies()
+            .then(({ data }) => {
+                const newCards = [];
+                data.forEach(c => {
+                    if (c.owner === currentUserState.id) {
+                        newCards.push(c);
+                    }
+                });
+                if (!newCards.length) {
+                    setFavoredCards([]);
+                    setVisibleCardsSM(['']);
+                } else if (newCards.length > 0) {
+                    setFavoredCards(newCards);
+                    setVisibleCardsSM(newCards);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+            })
     }
 
-    const handleFilterCheckboxSavedMovies = () => {
-        if (!isShortFilmSavedMovies) {
-            const sortedCards = filterCardsByDuration(savedCards);
-            setCardsSavedMovies(sortedCards);
-        } else {
-            setCardsSavedMovies(savedCards);
-        }
-        setIsShortFilmSavedMovies(!isShortFilmSavedMovies);
-    }
-
-    const filterCards = (keyword, cards, isShortFilm) => {
+    const searchCardsByWord = (cards, keyword) => {
         keyword = keyword.toLowerCase();
         const newCards = []
         cards.forEach(card => {
             let newCard = null;
             if (card.nameRU.toLowerCase().includes(keyword) || card.nameEN.toLowerCase().includes(keyword)) {
-                if (isShortFilm) {
-                    if (card.duration <= 40) {
-                        newCard = card;
-                    }
-                }
                 newCard = card;
             }
-            newCard && newCards.push(newCard);
+            if (newCard) {
+                newCards.push(newCard);
+            }
         })
         return newCards;
     }
@@ -152,64 +174,76 @@ function App() {
         return newCards;
     }
 
-    const getSavedMovies = () => {
-        mainApi.getMovies()
-            .then(({ data }) => {
-                const newCards = [];
-                data.forEach(c => {
-                    if (c.owner === currentUserState.id) {
-                        newCards.push(c);
-                    }
-                });
-                if (!newCards.length) {
-                    setSavedCards([]);
-                    setCardsSavedMovies(['']);
-                } else if (newCards.length > 0) {
-                    setSavedCards(newCards);
-                    setCardsSavedMovies(newCards);
-                }
-            })
-            .catch(err => {
-                console.error(err);
-            })
-    }
-
-    const handleMovieSearch = (keyword) => {
+    const handleMovieSearchClick = (key) => {
         setIsLoading(true);
-        moviesApi.getMovies()
-            .then((cards) => {
-                cards = filterCards(keyword, cards, isShortFilm);
-                setKeyword(keyword);
-                setTotalCards(cards);
-                setCards(cards.slice(0, initialCardsLength));
-                localStorage.setItem('keyword', keyword);
-                localStorage.setItem('isShortFilm', isShortFilm);
-                localStorage.setItem('cards', JSON.stringify(cards));
-            })
-            .catch(err => {
-                console.error(err);
-                setCards(null);
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
-    }
+        let cards = searchCardsByWord(initialCards, key);
+        console.log('found cards', cards.length);
 
-    const handleSavedMovieSearch = (keyword) => {
-        setIsLoading(true);
-        const cards = filterCards(keyword, savedCards, isShortFilmSavedMovies);
-        setKeywordSavedMovies(keyword);
-        setCardsSavedMovies(cards);
+        // сохраняем поисковое слово
+        setKeyword(key);
+        localStorage.setItem('keyword', key);
+
+        // сохраняем состояние переключателя
+        setIsShortFilm(isShortFilm);
+        localStorage.setItem('isShortFilm', isShortFilm);
+
+        // сохраняем карточки
+        setLongFilmCards(cards);
+        localStorage.setItem('cards', JSON.stringify(cards));
+
+        // фильтруем результат
+        if (isShortFilm) {  // если короткометражки
+            cards = filterCardsByDuration(cards);
+        }
+        setFoundCards(cards);
+        setVisibleCards(cards.slice(0, initialCardsLength));
         setIsLoading(false);
     }
 
+    const handleFilterCheckboxClick = (checkboxState) => {
+        setIsShortFilm(!checkboxState);
+        localStorage.setItem('isShortFilm', !isShortFilm);
+        // console.log(!checkboxState);
+        if (!checkboxState) { // если чекбокс включен
+            const shortFilms = filterCardsByDuration(foundCards);
+            console.log('short movies', shortFilms.length);
+            setLongFilmCards(foundCards);
+            setFoundCards(shortFilms);
+            setVisibleCards(shortFilms.slice(0, initialCardsLength));
+            localStorage.setItem('cards', JSON.stringify(foundCards));
+        } else {
+            console.log('return the result', longFilmCards.length);
+            setFoundCards(longFilmCards);
+            setVisibleCards(longFilmCards.slice(0, initialCardsLength));
+            localStorage.setItem('cards', JSON.stringify(longFilmCards));
+        }
+    }
+
+    const handleSMSearchClick = (keyword) => {
+        // setIsLoading(true);
+        // const cards = filterCards(keyword, favoredCards, isShortFilmSavedMovies);
+        // setKeywordSM(keyword);
+        // setVisibleCardsSM(cards);
+        // setIsLoading(false);
+    }
+
+    const handleFilterCheckboxSMClick = () => {
+        // if (!isShortFilmSavedMovies) {
+        //     const sortedCards = filterCardsByDuration(favoredCards);
+        //     setVisibleCardsSM(sortedCards);
+        // } else {
+        //     setVisibleCardsSM(favoredCards);
+        // }
+        // setIsShortFilmSavedMovies(!isShortFilmSavedMovies);
+    }
+
     const handleShowMoreMovies = () => {
-        setCards(totalCards.slice(0, cards.length + rowLength));
+        setVisibleCards(foundCards.slice(0, visibleCards.length + rowLength));
     }
 
     const handleCardLike = (card) => {
-        const isLiked = savedCards?.some(savedCard => savedCard?.movieId === card.id && savedCard?.owner === currentUserState.id);
-        const savedCard = isLiked ? savedCards?.find(savedCard => savedCard?.movieId === card.id && savedCard?.owner === currentUserState.id) :
+        const isLiked = favoredCards?.some(savedCard => savedCard?.movieId === card.id && savedCard?.owner === currentUserState.id);
+        const savedCard = isLiked ? favoredCards?.find(savedCard => savedCard?.movieId === card.id && savedCard?.owner === currentUserState.id) :
             {
                 country: card.country,
                 director: card.director,
@@ -228,96 +262,103 @@ function App() {
             .then((newCard) => {
                 let newCards = [];
                 if (isLiked) {
-                    savedCards.forEach(c => {
+                    favoredCards.forEach(c => {
                         if (c._id !== savedCard._id) {
                             newCards.push(c);
                         }
                     })
                 } else {
-                    newCards = [...savedCards, newCard.data];
+                    newCards = [...favoredCards, newCard.data];
                 }
                 if (!newCards.length) {
-                    setSavedCards([]);
-                    setCardsSavedMovies(['']);
+                    setFavoredCards([]);
+                    setVisibleCardsSM(['']);
                 } else if (newCards.length > 0) {
-                    setSavedCards(newCards);
-                    setCardsSavedMovies(newCards);
+                    setFavoredCards(newCards);
+                    setVisibleCardsSM(newCards);
                 }
             })
             .catch(err => {
                 console.error(err);
             })
-    }
-
-    const handleUpdateUser = (userInfo) => {
-        mainApi.updateUserInfo(userInfo)
-            .then(newUserInfo => {
-                setMessage(profileEditSuccessMessage);
-                setCurrentUser({ id: newUserInfo.data._id, name: newUserInfo.data.name, email: newUserInfo.data.email });
-            })
-            .catch(err => {
-                setMessage('При обновлении профиля произошла ошибка.');
-                console.error(err);
-            });
     }
 
     const handleSavedMoviesRemove = (cardId) => {
         mainApi.removeLike(cardId)
             .then((newCard) => {
                 const newCards = []
-                savedCards.forEach(c => {
+                favoredCards.forEach(c => {
                     if (c._id !== cardId) {
                         newCards.push(c);
                     }
                 })
                 if (!newCards.length) {
-                    setSavedCards([]);
-                    setCardsSavedMovies(['']);
+                    setFavoredCards([]);
+                    setVisibleCardsSM(['']);
                 } else if (newCards.length > 0) {
-                    setSavedCards(newCards);
-                    setCardsSavedMovies(newCards);
+                    setFavoredCards(newCards);
+                    setVisibleCardsSM(newCards);
                 }
             })
             .catch(err => {
                 console.error(err);
             })
     }
-    
-    // валидация токена пользователя
+
+    // валидация токена пользователя и загрузка карточек
     React.useEffect(() => {
         handleValidateToken();
+
+        moviesApi.getMovies()
+            .then((cards) => {
+                setInitialCards(cards);
+                console.log('initial cards length', cards.length);
+            })
+            .catch(err => {
+                console.error(err);
+            });
     }, []);
 
-    React.useEffect(() => {
-        getSavedMovies();
-    }, [currentUserState?.id]);
+    // React.useEffect(() => {
+    //     getSavedMovies();
+    // }, [currentUserState?.id]);
 
     // отображение сохранненных в лок хранилище карточек (если есть)
     React.useEffect(() => {
-        setIsShortFilm(localStorage.getItem('isShortFilm') === "true" ? true : false);
-        setKeyword(localStorage.getItem('keyword') || '');
+        setIsLoading(true);
+        const savedCheckbox = localStorage.getItem('isShortFilm');
+        const savedKeyword = localStorage.getItem('keyword');
+        const savedCards = JSON.parse(localStorage.getItem('cards'));
 
-        const data = JSON.parse(localStorage.getItem('cards'));
-        if (data) {
-            setTotalCards(data);
-            setCards(data.slice(0, initialCardsLength));
+        // если данные имеются в локальном хранилище, то загружаем из него
+        if ((savedCheckbox || savedKeyword) && savedCards) {
+            const checkbox = savedCheckbox === "true" ? true : false;
+            setIsShortFilm(checkbox);
+            setKeyword(savedKeyword || '');
+            if (checkbox) {
+                const shortFilms = filterCardsByDuration(savedCards);
+                setLongFilmCards(savedCards);
+                setFoundCards(shortFilms);
+                setVisibleCards(shortFilms.slice(0, initialCardsLength));
+            } else {
+                setFoundCards(savedCards);
+                setVisibleCards(savedCards.slice(0, initialCardsLength));
+            }
         } else {
-            // загрузка карточек с битфильмс
-            setIsLoading(true);
-            moviesApi.getMovies()
-                .then((cards) => {
-                    setTotalCards(cards);
-                    setCards(cards.slice(0, initialCardsLength));
-                })
-                .catch(err => {
-                    console.error(err);
-                    setCards(null);
-                })
-                .finally(() => {
-                    setIsLoading(false);
-                });
+            // загрузка карточек без параметров поиска
+            setIsShortFilm(false);
+            setKeyword('');
+            setLongFilmCards(initialCards);
+            setFoundCards(initialCards);
+            setVisibleCards(initialCards.slice(0, initialCardsLength));
         }
-    }, [currentUserState?.id, initialCardsLength]);
+        setIsLoading(false);
+    }, [initialCards]);
+
+    // перерисовка в случае ресайза
+    React.useEffect(() => {
+        setVisibleCards(foundCards.slice(0, initialCardsLength));
+    }, [initialCardsLength]);
 
     // навешивание ресайза на окно
     React.useEffect(() => {
@@ -348,8 +389,8 @@ function App() {
 
     // нужно ли скрыть кнопку Еще
     React.useEffect(() => {
-        setIsLastRow(cards.length >= totalCards.length);
-    }, [cards, totalCards])
+        setIsLastRow(visibleCards.length >= foundCards.length);
+    }, [visibleCards, foundCards])
 
     // навешивание обработчиков на закрытие меню
     React.useEffect(() => {
@@ -388,10 +429,10 @@ function App() {
                                 onClosePopup={closePopup}
                                 onOpenPopup={handleMenuClick}
                                 keyword={keyword}
-                                cards={cards}
-                                savedCards={savedCards}
+                                cards={visibleCards}
+                                savedCards={favoredCards}
                                 onShowMoreMovies={handleShowMoreMovies}
-                                onSearchMovie={handleMovieSearch}
+                                onSearchMovie={handleMovieSearchClick}
                                 onFilterCheckboxClick={handleFilterCheckboxClick}
                                 onCardLike={handleCardLike}
                                 isShortFilm={isShortFilm}
@@ -408,10 +449,10 @@ function App() {
                                 isMenuOpen={isMenuOpen}
                                 onClosePopup={closePopup}
                                 onOpenPopup={handleMenuClick}
-                                keyword={keywordSavedMovies}
-                                cards={cardsSavedMovies}
-                                onSearchMovie={handleSavedMovieSearch}
-                                onFilterCheckboxClick={handleFilterCheckboxSavedMovies}
+                                keyword={keywordSM}
+                                cards={visibleCardsSM}
+                                onSearchMovie={handleSMSearchClick}
+                                onFilterCheckboxClick={handleFilterCheckboxSMClick}
                                 onCardRemove={handleSavedMoviesRemove}
                                 isShortFilm={isShortFilmSavedMovies}
                                 isLoading={isLoading}
