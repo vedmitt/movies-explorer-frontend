@@ -11,7 +11,7 @@ import ProtectedRoute from "../ProtectedRoute.js/ProtectedRoute.js";
 import { moviesApi } from "../../utils/MoviesApi.js";
 import { mainApi } from "../../utils/MainApi.js";
 import { currentUser, CurrentUserContext } from "../../contexts/CurrentUserContext.js";
-import { initialCardsLength1280, initialCardsLength320, initialCardsLength768, longTimeout, moviesApiBaseUrl, profileEditSuccessMessage, rowLength1280, rowLength320, rowLength768, shortFilmDuration } from "../../utils/constants.js";
+import { initialCardsLength1280, initialCardsLength320, initialCardsLength768, longTimeout, moviesApiBaseUrl, profileEditSuccessMessage, rowLength1280, rowLength320, rowLength768, shortFilmDuration, shortTimeout } from "../../utils/constants.js";
 
 function App() {
     const [currentUserState, setCurrentUser] = React.useState(currentUser);
@@ -36,6 +36,16 @@ function App() {
     const [visibleCards, setVisibleCards] = React.useState(['']);  // карточки в зоне видимости
 
 
+    const getInitialCards = () => {
+        moviesApi.getMovies()
+            .then((cards) => {
+                setInitialCards(cards);
+            })
+            .catch(err => {
+                console.error(err);
+            });
+    }
+    
     const handleRegisterUser = (email, password, name) => {
         setIsLoading(true);
         mainApi.register(name, email, password)
@@ -60,6 +70,7 @@ function App() {
                 // токен создан и записан в куки
                 // валидируем токен
                 handleValidateToken();
+                getInitialCards()
             }).catch(err => {
                 setMessage((err === 'Ошибка: 401' && 'Вы ввели неправильный логин или пароль.') ||
                     (err === 'Ошибка: 400' && 'При авторизации произошла ошибка. Токен не передан или передан не в том формате.') ||
@@ -198,7 +209,7 @@ function App() {
         setIsLoading(true);
         setTimeout(() => {
             setIsLoading(false);
-        }, 500);
+        }, shortTimeout);
 
         setIsShortFilm(!checkboxState);
         localStorage.setItem('isShortFilm', !isShortFilm);
@@ -282,14 +293,7 @@ function App() {
     // валидация токена пользователя и загрузка карточек
     React.useEffect(() => {
         handleValidateToken();
-
-        moviesApi.getMovies()
-            .then((cards) => {
-                setInitialCards(cards);
-            })
-            .catch(err => {
-                console.error(err);
-            });
+        getInitialCards();
     }, []);
 
     // загрузка избранных фильмов
@@ -315,6 +319,7 @@ function App() {
 
     // отображение сохранненных в лок хранилище карточек (если есть)
     React.useEffect(() => {
+        setIsLoading(true);
         setTimeout(() => {
             setIsLoading(false);
         }, longTimeout);
