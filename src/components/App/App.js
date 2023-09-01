@@ -11,7 +11,21 @@ import ProtectedRoute from "../ProtectedRoute.js/ProtectedRoute.js";
 import { moviesApi } from "../../utils/MoviesApi.js";
 import { mainApi } from "../../utils/MainApi.js";
 import { currentUser, CurrentUserContext } from "../../contexts/CurrentUserContext.js";
-import { initialCardsLength1280, initialCardsLength320, initialCardsLength768, longTimeout, moviesApiBaseUrl, profileEditSuccessMessage, rowLength1280, rowLength320, rowLength768, shortFilmDuration, shortTimeout } from "../../utils/constants.js";
+import {
+    initialCardsLength1280,
+    initialCardsLength320,
+    initialCardsLength768,
+    longTimeout,
+    moviesApiBaseUrl,
+    profileEditSuccessMessage,
+    rowLength1280,
+    rowLength320,
+    rowLength768,
+    shortFilmDuration,
+    shortTimeout,
+    windowWidthWide,
+    windowWidthNarrow,
+} from "../../utils/constants.js";
 
 function App() {
     const [currentUserState, setCurrentUser] = React.useState(currentUser);
@@ -45,7 +59,7 @@ function App() {
                 console.error(err);
             });
     }
-    
+
     const handleRegisterUser = (email, password, name) => {
         setIsLoading(true);
         mainApi.register(name, email, password)
@@ -126,8 +140,8 @@ function App() {
                 setMenuOpen(false);
                 setIsLoading(false);
                 setMessage('');
-                setRowLength(3);
-                setInitialCardsLength(12);
+                setRowLength(rowLength1280);
+                setInitialCardsLength(initialCardsLength1280);
                 setIsLastRow(false);
                 setKeyword('');
                 setIsShortFilm(false);
@@ -372,10 +386,10 @@ function App() {
 
     // корректное отображение ряда карточек
     React.useEffect(() => {
-        if (windowWidth > 1087) {
+        if (windowWidth > windowWidthWide) {
             setInitialCardsLength(initialCardsLength1280);
             setRowLength(rowLength1280);
-        } else if (windowWidth > 688) {
+        } else if (windowWidth > windowWidthNarrow) {
             setInitialCardsLength(initialCardsLength768);
             setRowLength(rowLength768);
         } else {
@@ -421,7 +435,6 @@ function App() {
                         element={
                             <ProtectedRoute
                                 element={Movies}
-                                loggedIn={currentUserState}
                                 isMenuOpen={isMenuOpen}
                                 onClosePopup={closePopup}
                                 onOpenPopup={handleMenuClick}
@@ -442,7 +455,6 @@ function App() {
                         element={
                             <ProtectedRoute
                                 element={SavedMovies}
-                                loggedIn={currentUserState}
                                 isMenuOpen={isMenuOpen}
                                 onClosePopup={closePopup}
                                 onOpenPopup={handleMenuClick}
@@ -481,13 +493,11 @@ function App() {
                         element={
                             <ProtectedRoute
                                 element={Profile}
-                                loggedIn={currentUserState}
                                 isMenuOpen={isMenuOpen}
                                 onClosePopup={closePopup}
                                 onOpenPopup={handleMenuClick}
                                 onUpdateUser={handleUpdateUser}
                                 message={message}
-                                currentUser={currentUserState}
                                 onSignOut={handleSignOut}
                                 isLoading={isLoading}
                             />

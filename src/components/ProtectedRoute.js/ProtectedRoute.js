@@ -1,9 +1,12 @@
 import React from 'react';
 import { Navigate } from "react-router-dom";
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 
 const ProtectedRoute = ({ element: Component, ...props }) => {
+  const currentUser = React.useContext(CurrentUserContext);
+
     return (
-      props.loggedIn ? <Component {...props} /> : <Navigate to="/" replace/>
+      currentUser ? <Component {...props} /> : <Navigate to="/" replace/>
   )
 }
 

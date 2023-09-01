@@ -5,8 +5,11 @@ import NavMovieTab from "../NavMovieTab/NavMovieTab";
 import Navigation from "../Navigation/Navigation";
 import { useFormAndValidation } from "../../hooks/useFormAndValidation";
 import { profileEditSuccessMessage } from "../../utils/constants";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 
-function Profile({ currentUser, onUpdateUser, isMenuOpen, onClosePopup, onOpenPopup, onSignOut, message, isLoading }) {
+function Profile({ onUpdateUser, isMenuOpen, onClosePopup, onOpenPopup, onSignOut, message, isLoading }) {
+    const currentUser = React.useContext(CurrentUserContext);
+
     const initialState = { name: '' };
     const { values, handleChange, errors, isValid, setValues, resetForm } = useFormAndValidation(initialState, currentUser.name);
     const [isEdit, setIsEdit] = React.useState(false);
