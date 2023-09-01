@@ -4,6 +4,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-self: center;
+    color: #000;
 }
 
 .nav-movie__links {
@@ -35,8 +36,11 @@
     margin: 0 16px 0 0;
 }
 
+.nav-movie__link_color_white {
+    color: #fff;
+}
+
 .nav-movie__link_bold {
-    color: #000;
     text-align: right;
     font-family: Inter, sans-serif;
     font-size: 13px;
@@ -55,10 +59,22 @@
     font-family: Inter, sans-serif;
     font-size: 14px;
     font-style: normal;
-    font-weight: 500;
+    font-weight: 400;
     line-height: 16px;
     text-decoration: none;
     margin: 0;
+}
+
+.profile-link_bold {
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px;
+}
+
+.profile-link_color_white {
+    color: #fff;
 }
 
 .profile-link:after {

@@ -1,3 +1,15 @@
+.movies-card-list-message {
+    max-width: 80%;
+    color: #000;
+    font-family: Inter, sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-align: center;
+    margin: 115px auto 80px;
+}
+
 .movies-card-list {
     box-sizing: border-box;
     display: flex;

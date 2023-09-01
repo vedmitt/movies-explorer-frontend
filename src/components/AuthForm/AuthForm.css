@@ -49,26 +49,47 @@
     padding: 0;
 }
 
-.form__save-btn {
-    color: #FFF;
+.form__message {
+    color: #FF004C;
     text-align: center;
-    font-family: Inter;
+    font-family: Inter, sans-serif;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    padding: 0 0 20px;
+    margin: 70px 0 0;
+}
+
+.form__message_margin_large {
+    margin: 170px 0 0;
+}
+
+.form__save-btn {
+    text-align: center;
+    font-family: Inter, sans-serif;
+    border-radius: 3px;
+    background: #F8F8F8;
+    color: #C2C2C2;
     font-size: 14px;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
-    border-radius: 3px;
-    background: #FF6838;
     border: none;
     padding: 14px;
-    margin: 70px 0 0;
+    margin: 0;
 }
 
-.form__save-btn_margin_large {
-    margin: 170px 0 0;
+.form__save-btn_active {
+    color: #FFF;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    background: #FF6838;
 }
 
-.form__save-btn:hover {
+.form__save-btn_active:hover {
     opacity: .8;
     cursor: pointer;
 }
@@ -76,6 +97,10 @@
 @media screen and (max-width: 400px) {
     .form__input {
         padding: 15px;
+    }
+
+    .form__message {
+        margin: 157px 0 0;
     }
 
     .form__save-btn {
@@ -86,9 +111,10 @@
         font-style: normal;
         font-weight: 500;
         line-height: normal;
-        margin: 157px 0 0;
+        margin: 0;
     }
-    .form__save-btn_margin_large {
+
+    .form__message_margin_large {
         margin: 258px 0 0;
     }
 }

@@ -7,11 +7,18 @@ import Portfolio from "../Portfolio/Portfolio.js";
 import Header from "../Header/Header.js";
 import Footer from "../Footer/Footer.js";
 import NavTab from "../NavTab/NavTab.js";
+import NavMovieTab from "../NavMovieTab/NavMovieTab.js";
+import Navigation from "../Navigation/Navigation.js";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 
-function Main() {
+function Main({ isMenuOpen, onOpenPopup, onClosePopup }) {
+    const currentUser = React.useContext(CurrentUserContext);
+
     return (
         <>
-        <Header isAboutProject={true}><NavTab /></Header>
+            <Header isAboutProject={true}>
+                {currentUser?.email ? <NavMovieTab isAboutProject={true} onMenuClick={onOpenPopup} /> : <NavTab />}
+            </Header>
             <main>
                 <Promo />
                 <AboutProject />
@@ -19,7 +26,8 @@ function Main() {
                 <AboutMe />
                 <Portfolio />
             </main>
-        <Footer />
+            <Footer />
+            <Navigation isOpen={isMenuOpen} onClose={onClosePopup} />
         </>
     );
 }
