@@ -3,21 +3,16 @@
 Фронтенд часть дипломного проекта по курсу "Веб-разработчик" от Яндекс практикума.
 
 ### Стек технологий:
-- React
-- JavaScript
 - HTML
 - CSS
-
-Сайт размещен на Яндекс.Облаке.
-
-Бэкенд: [https://github.com/...](https://github.com/vedmitt/movies-explorer-api)
-Фронтенд: [https://github.com/...](https://github.com/vedmitt/movies-explorer-frontend)
+- React
+- MongoDB
 
 ## Ссылки на проект
 
-Frontend [https://movie-explorer.nomoredomains.xyz](https://movie-explorer.nomoredomains.xyz)
+Бэкенд: [https://github.com/...](https://github.com/vedmitt/movies-explorer-api)
 
-Backend [https://api.mymovie-explorer.nomoredomains.xyz](https://api.mymovie-explorer.nomoredomains.xyz)
+Фронтенд: [https://github.com/...](https://github.com/vedmitt/movies-explorer-frontend)
 
 ## Чтобы запустить локально
 
