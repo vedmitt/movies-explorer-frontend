@@ -6,7 +6,6 @@
 - HTML
 - CSS
 - React
-- MongoDB
 
 ## Ссылки на проект
 
